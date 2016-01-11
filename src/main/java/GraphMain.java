@@ -17,36 +17,26 @@ public class GraphMain {
 
         try {
             Graph graphToDraw = TinkerGraph.open();
+            graphToDraw.io(IoCore.graphml()).readGraph("input.xml");
 
-//            Iterator iter = graph.vertices();
+
 //
-//            Vertex v;
-//            while (iter.hasNext()) {
-//                v = (Vertex)iter.next();
-//                v.property("x", 200.0);
-//                v.property("y", 200.0);
+////            graph.io(IoCore.graphml()).writeGraph("test.xml");
+//            GraphEvolutionGenerator generator = new GraphEvolutionGenerator(graphToDraw);
+//
+//            GraphQualityEvaluator evaluator = new GraphQualityEvaluator(maxNumberOfIterations, desiredQuality);
+//            Graph newEvolution;
+//            while (true) {
+//                newEvolution = generator.getGraphWithCoordinates();
+//                if (evaluator.isGraphGoodEnough(newEvolution)) { break; }
+//                else {
+//                    GraphDrawer.draw(newEvolution);
+//                }
 //            }
-
-
-//            graph.io(IoCore.graphml()).writeGraph("test.xml");
-
-            GraphEvolutionGenerator generator = new GraphEvolutionGenerator(graphToDraw);
-            GraphVQualityEvaluator evaluator = new GraphVQualityEvaluator(10, 10);
-            Graph newEvolution;
-            while (true) {
-                newEvolution = generator.getGraphWithCoordinates();
-                if (evaluator.isGraphGoodEnough(newEvolution)) { break; }
-                else {
-                    GraphDrawer.draw(newEvolution);
-                }
-
-            } 
-            //Draw final graph and write it to output file.
-
-            newEvolution.io(IoCore.graphml()).writeGraph("output.xml");
-            GraphDrawer.draw(newEvolution);
-
-
+//
+//            //Draw final graph and write it to output file.
+//            newEvolution.io(IoCore.graphml()).writeGraph("output.xml");
+//            GraphDrawer.draw(newEvolution);
 
 
         } catch (IOException e) {
