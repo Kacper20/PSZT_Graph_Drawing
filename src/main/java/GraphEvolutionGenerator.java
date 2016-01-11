@@ -1,6 +1,4 @@
-import org.apache.tinkerpop.gremlin.structure.Edge;
-import org.apache.tinkerpop.gremlin.structure.Graph;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
+
 import org.javatuples.Pair;
 
 import java.lang.reflect.Array;
@@ -14,10 +12,10 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class GraphEvolutionGenerator {
 
-    private final Graph graph;
+    private final PSZTGraph graph;
 
-    private Graph currentGraphWithCoordinates;
-    private ArrayList<Graph> population;
+    private PSZTGraph currentGraphWithCoordinates;
+    private ArrayList<PSZTGraph> population;
     private int populationSize;
     private int canvasWidth;
     private int canvasHeight;
@@ -27,22 +25,13 @@ public class GraphEvolutionGenerator {
 
 
 
-    /*
-        Parametry:
-        populacja -> parametr
-
-
-
-     */
 
 
 
 
 
 
-
-
-    public GraphEvolutionGenerator(Graph graph, int populationSize, int canvasWidth, int canvasHeight, double vertexDiameter){
+    public GraphEvolutionGenerator(PSZTGraph graph, int populationSize, int canvasWidth, int canvasHeight, double vertexDiameter){
         this.graph = graph;
         this.populationSize = populationSize;
         this.canvasWidth = canvasWidth;
@@ -54,36 +43,32 @@ public class GraphEvolutionGenerator {
 
 
     }
-    private Graph generateRandomGraph(Graph graph) {
+    private PSZTGraph generateRandomGraph(PSZTGraph graph) {
 
 
-        Iterator<Vertex> verticesIterator = graph.vertices();
-        while (verticesIterator.hasNext()) {
+        for (PSZTVertex v : graph.getVertices()) {
 
-            Vertex next = verticesIterator.next();
             double randomX =  ThreadLocalRandom.current().nextDouble(0, canvasHeight);
             double randomY = ThreadLocalRandom.current().nextDouble(0, canvasHeight);
-            next.property("x", randomX);
-            next.property("y", randomY);
+            v.setX(randomX);
+            v.setY(randomY);
         }
 
-        Iterator<Edge> edgesIterator = graph.edges();
-        while (edgesIterator.hasNext()) {
-            Edge edge = edgesIterator.next();
+        for (PSZTEdge edge: graph.getEdges()) {
 
             double randomX = ThreadLocalRandom.current().nextDouble(- canvasWidth, 2 * canvasWidth);
             double randomY = ThreadLocalRandom.current().nextDouble(- canvasHeight, 2 * canvasHeight);
 
-            edge.property("Ox", randomX);
-            edge.property("Oy", randomY);
+            edge.setPointX(randomX);
+            edge.setPointY(randomY);
         }
         return graph;
 
 
     }
 
-    private ArrayList<Graph> generateStartingPopulation(Graph startingGraph, int size) {
-        ArrayList<Graph> list = new ArrayList<Graph>();
+    private ArrayList<PSZTGraph> generateStartingPopulation(PSZTGraph startingGraph, int size) {
+        ArrayList<PSZTGraph> list = new ArrayList<PSZTGraph>();
 
         for (int i = 0; i < size; i++) {
             list.add(generateRandomGraph(startingGraph));
@@ -94,32 +79,47 @@ public class GraphEvolutionGenerator {
 
     //Function that takes
 
-    synchronized ArrayList<Graph> generateNextPopulation() {
+    synchronized ArrayList<PSZTGraph> generateNextPopulation() {
 
-        ArrayList<Pair<Graph, Double>> list = new ArrayList<Pair<Graph, Double>>();
+        ArrayList<Pair<PSZTGraph, Double>> list = new ArrayList<Pair<PSZTGraph, Double>>();
 
-        for (Graph g: population) {
+        for (PSZTGraph g: population) {
             double quality = evaluator.qualityOfGraph(g);
-            Pair<Graph, Double> newPair = new Pair<Graph, Double>(g, quality);
+            Pair<PSZTGraph, Double> newPair = new Pair<PSZTGraph, Double>(g, quality);
             list.add(newPair);
         }
-        list.sort(new Comparator<Pair<Graph, Double>>() {
-            public int compare(Pair<Graph, Double> o1, Pair<Graph, Double> o2) {
+        list.sort(new Comparator<Pair<PSZTGraph, Double>>() {
+            public int compare(Pair<PSZTGraph, Double> o1, Pair<PSZTGraph, Double> o2) {
                 if (o1.getValue1() > o2.getValue1()) { return 1; }
                 else if (o1.getValue1() < o2.getValue1()) { return -1; }
                 return 0;
             }
         });
 
-        return new ArrayList<Graph>();
+        double percentOfPopulationToRemove = 0.5;
+        int elementsToRemove = this.populationSize * (int)percentOfPopulationToRemove;
+
+        ArrayList<PSZTGraph> tempPopulation = new ArrayList<PSZTGraph>();
+        for (int i = elementsToRemove; i < population.size(); i++) {
+            tempPopulation.add(this.population.get(i));
+        }
 
 
+        ArrayList<PSZTGraph> mutatedPopulation = new ArrayList<PSZTGraph>(tempPopulation);
+        for (int i = 0; i < tempPopulation.size(); i++) {
+
+            int indx1 = ThreadLocalRandom.current().nextInt(0, tempPopulation.size());
+            int indx2 = ThreadLocalRandom.current().nextInt(0, tempPopulation.size());
 
 
+            PSZTGraph firstGraph = tempPopulation.get(indx1);
+            PSZTGraph secondGraph = tempPopulation.get(indx2);
 
+            PSZTGraph newGraph = crossPopulation(firstGraph, secondGraph);
+            mutatedPopulation.add(newGraph);
+        }
 
-
-
+        return mutatedPopulation;
 
 
 
@@ -127,7 +127,77 @@ public class GraphEvolutionGenerator {
 
     }
 
-    synchronized Graph stopAlgorithm() {
+
+    private PSZTGraph crossPopulation(PSZTGraph graph1, PSZTGraph graph2) {
+
+
+
+        try {
+            PSZTGraph newGraph = (PSZTGraph)graph1.clone();
+
+            int length = graph1.getVertices().size();
+
+            for (int i = 0; i < length; i++) {
+
+
+
+                PSZTVertex next1 = graph1.getVertices().get(i);
+                PSZTVertex next2 = graph2.getVertices().get(i);
+
+                PSZTVertex newVertex = newGraph.getVertices().get(i);
+
+
+                if (ThreadLocalRandom.current().nextBoolean()) {
+                    newVertex.setX(next1.getX());
+                }
+                else {
+                    newVertex.setX(next2.getX());
+                }
+                if (ThreadLocalRandom.current().nextBoolean()) {
+                    newVertex.setY(next1.getY());
+
+                }
+                else {
+                    newVertex.setY(next2.getY());
+                }
+            }
+
+            int edgesCount = graph2.getEdges().size();
+            for (int i = 0; i < edgesCount; i++) {
+
+
+                PSZTEdge edge1 = graph1.getEdges().get(i);
+                PSZTEdge edge2 = graph2.getEdges().get(i);
+                PSZTEdge newEdge = newGraph.getEdges().get(i);
+
+
+                if (ThreadLocalRandom.current().nextBoolean()) {
+                    newEdge.setPointX(edge1.getPointX());
+                }
+                else {
+                    newEdge.setPointX(edge2.getPointX());
+                }
+                if (ThreadLocalRandom.current().nextBoolean()) {
+                    newEdge.setPointY(edge1.getPointY());
+
+                }
+                else {
+                    newEdge.setPointY(edge2.getPointY());
+                }
+
+            }
+
+            return graph1;
+        }
+        catch (Exception e) {
+            System.out.println("Exception" + e.toString());
+            return null;
+        }
+
+
+    }
+
+    synchronized PSZTGraph stopAlgorithm() {
         return getBestGraphFromCurrentPopulation();
 
 
@@ -135,7 +205,7 @@ public class GraphEvolutionGenerator {
     }
 
 
-    Graph getBestGraphFromCurrentPopulation() {
+    PSZTGraph getBestGraphFromCurrentPopulation() {
 
 
 
@@ -148,7 +218,7 @@ public class GraphEvolutionGenerator {
 
 
 
-    Graph getGraphWithCoordinates() {
+    PSZTGraph getGraphWithCoordinates() {
         //TODO: Mutate currentGraphWithCoordinates...
 
         return currentGraphWithCoordinates;

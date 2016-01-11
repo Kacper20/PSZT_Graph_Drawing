@@ -12,8 +12,7 @@ public class GraphMain {
 
     public static void main(String[] args) {
 
-        Integer maxNumberOfIterations = 10;
-        Integer desiredQuality = 20;
+
 
         try {
             Graph graphToDraw = TinkerGraph.open();

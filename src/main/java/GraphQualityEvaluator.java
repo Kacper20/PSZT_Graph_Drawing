@@ -11,7 +11,7 @@ public class GraphQualityEvaluator {
 
     }
 
-    int qualityOfGraph(Graph graph) {
+    int qualityOfGraph(PSZTGraph graph) {
 
 
         return 0;
