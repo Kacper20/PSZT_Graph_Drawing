@@ -1,4 +1,6 @@
 import org.apache.batik.swing.JSVGCanvas;
+import org.apache.batik.swing.svg.JSVGComponent;
+import org.w3c.dom.Document;
 
 import javax.swing.*;
 import java.awt.*;
@@ -82,6 +84,8 @@ public class MainWindow {
                 panel.setLayout(new GridBagLayout());
                 this.setConstrainst(c, 1, 1, 1, 1, 0, 0, 1, 1, GridBagConstraints.BOTH);
                 svgCanvas.setSize(panel.getSize());
+                svgCanvas.setDocumentState(JSVGComponent.ALWAYS_DYNAMIC);
+
                 System.out.println(panel.getSize());
                 panel.add(svgCanvas, c);
 
@@ -103,6 +107,11 @@ public class MainWindow {
                 c.weightx = weightx;
                 c.weighty = weighty;
                 c.fill = fill;
+            }
+            // funkcja zmieniająca wyświetlany obraz svg
+            public void updateCanvas(Document d)
+            {
+                svgCanvas.setDocument(d);
             }
         });
     }
