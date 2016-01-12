@@ -19,8 +19,8 @@ class Triangle {
 
         // y = mx + b
         // solve for b
-        float bAB = midAB.y - slopeAB * midAB.x;
-        float bBC = midBC.y - slopeBC * midBC.x;
+        float bAB = (float)(midAB.y - slopeAB * midAB.x);
+        float bBC = (float)(midBC.y - slopeBC * midBC.x);
 
         // solve for x & y
         // x = (b1 - b2) / (m2 - m1)
@@ -68,7 +68,7 @@ class Triangle {
 
     // returns the slope of the line between two points
     public float Slope(PVector from, PVector to) {
-        return (to.y - from.y) / (to.x - from.x);
+        return (float)(to.y - from.y) / (float)(to.x - from.x);
     }
 
     // returns true if point is in the circle located at center with the specified radius
