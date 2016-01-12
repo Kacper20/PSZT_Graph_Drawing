@@ -43,4 +43,8 @@ public class GraphMain {
         }
 
     }
+
+    public static void testTriangle (){
+
+    }
 }
