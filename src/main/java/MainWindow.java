@@ -77,10 +77,13 @@ public class MainWindow {
                 window.getContentPane().add(setValuesButton, c);
                 this.setConstrainst(c, 2, 4, 1, 1, 0, 0, 1, 1, GridBagConstraints.NONE);
                 window.getContentPane().add(clearButton, c);
-                this.setConstrainst(c, 2, 5, 1, 60, 0, 0, 1, 60, GridBagConstraints.NONE);
+                this.setConstrainst(c, 0, 5, 9, 1, 0, 0, 40, 60, GridBagConstraints.BOTH);
                 window.getContentPane().add(panel, c);
-                panel.setLayout(new GridLayout(1,1));
-                panel.add(svgCanvas);
+                panel.setLayout(new GridBagLayout());
+                this.setConstrainst(c, 1, 1, 1, 1, 0, 0, 1, 1, GridBagConstraints.BOTH);
+                svgCanvas.setSize(panel.getSize());
+                System.out.println(panel.getSize());
+                panel.add(svgCanvas, c);
 
                 window.setVisible(true);
 

@@ -12,7 +12,7 @@ public class GraphMain {
 
     public static void main(String[] args) {
 
-
+        MainWindow w = new MainWindow();
 
         try {
             Graph graphToDraw = TinkerGraph.open();
