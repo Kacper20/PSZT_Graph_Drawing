@@ -50,4 +50,18 @@ public class PSZTEdge implements Cloneable{
     protected Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
+    public double getCircleRadius() {
+
+        PVector point = new PVector(from.getX(), from.getY());
+        return triangleFromBow().GetCircumcenter().dist(point);
+    }
+
+    public Triangle triangleFromBow() {
+        PVector p1 = new PVector(from.getX(), from.getY());
+        PVector p2 = new PVector(to.getX(), to.getY());
+        PVector p3 = new PVector(pointX, pointY);
+
+        PVector[] arr = new PVector[] {p1, p2, p3};
+        return new Triangle(arr);
+    }
 }

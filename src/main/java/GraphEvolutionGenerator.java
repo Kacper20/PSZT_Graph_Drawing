@@ -3,6 +3,7 @@ import org.javatuples.Pair;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.concurrent.ThreadLocalRandom;
@@ -22,15 +23,6 @@ public class GraphEvolutionGenerator {
     private double vertexDiameter;
 
     private GraphQualityEvaluator evaluator;
-
-
-
-
-
-
-
-
-
     public GraphEvolutionGenerator(PSZTGraph graph, int populationSize, int canvasWidth, int canvasHeight, double vertexDiameter){
         this.graph = graph;
         this.populationSize = populationSize;
@@ -105,7 +97,7 @@ public class GraphEvolutionGenerator {
         }
 
 
-        ArrayList<PSZTGraph> mutatedPopulation = new ArrayList<PSZTGraph>(tempPopulation);
+        ArrayList<PSZTGraph> sumOfPopulations = new ArrayList<PSZTGraph>(tempPopulation);
         for (int i = 0; i < tempPopulation.size(); i++) {
 
             int indx1 = ThreadLocalRandom.current().nextInt(0, tempPopulation.size());
@@ -116,21 +108,21 @@ public class GraphEvolutionGenerator {
             PSZTGraph secondGraph = tempPopulation.get(indx2);
 
             PSZTGraph newGraph = crossPopulation(firstGraph, secondGraph);
-            mutatedPopulation.add(newGraph);
+            sumOfPopulations.add(newGraph);
         }
 
-        return mutatedPopulation;
+        mutatePopulation(sumOfPopulations);
+        return sumOfPopulations;
+    }
 
+    private void mutatePopulation(ArrayList<PSZTGraph> population) {
 
 
 
 
     }
 
-
     private PSZTGraph crossPopulation(PSZTGraph graph1, PSZTGraph graph2) {
-
-
 
         try {
             PSZTGraph newGraph = (PSZTGraph)graph1.clone();
@@ -199,35 +191,19 @@ public class GraphEvolutionGenerator {
 
     synchronized PSZTGraph stopAlgorithm() {
         return getBestGraphFromCurrentPopulation();
-
-
-
     }
 
 
     PSZTGraph getBestGraphFromCurrentPopulation() {
-
-
-
-
-
-
-        return population.get(0);
-    }
-
-
-
-
-    PSZTGraph getGraphWithCoordinates() {
-        //TODO: Mutate currentGraphWithCoordinates...
-
-        return currentGraphWithCoordinates;
+        return Collections.max(this.population, new Comparator<PSZTGraph>() {
+            public int compare(PSZTGraph o1, PSZTGraph o2) {
+                int quality1 = evaluator.qualityOfGraph(o1);
+                int quality2 = evaluator.qualityOfGraph(o2);
+                if (quality1 > quality2) { return 1; }
+                if (quality1 < quality2) { return -1; }
+                return 0;
+            }
+        });
 
     }
-
-
-
-
-
-
 }
