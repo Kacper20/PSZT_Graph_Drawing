@@ -1,4 +1,12 @@
+
+import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.Graph;
+import org.apache.tinkerpop.gremlin.structure.T;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
+
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,4 +55,97 @@ public class PSZTGraph implements Cloneable {
 
 
     }
+//TODO: read x and y values too.
+    public PSZTGraph(Graph graph) {
+
+        ArrayList<PSZTEdge> psztEdges = new ArrayList<>();
+        ArrayList<PSZTVertex> psztVertexes = new ArrayList<>();
+
+        Iterator<Vertex> vertexIterator = graph.vertices();
+
+
+        while (vertexIterator.hasNext()) {
+            Vertex v = vertexIterator.next();
+            String id = (String)v.id();
+
+            PSZTVertex vertex = new PSZTVertex(id, null, null);
+            psztVertexes.add(vertex);
+        }
+
+
+
+        Iterator<Edge> edgeIterator = graph.edges();
+        while (edgeIterator.hasNext()) {
+
+            Edge e = edgeIterator.next();
+            Vertex in = e.inVertex();
+            String inVertexId = in.id().toString();
+
+            PSZTVertex vIn = vertexOfId(psztVertexes, inVertexId);
+            assert(vIn != null);
+
+            Vertex out = e.outVertex();
+            String outVertexId = out.id().toString();
+            PSZTVertex vOut = vertexOfId(psztVertexes, outVertexId);
+            assert(vOut != null);
+
+            String edgeId = e.id().toString();
+
+            PSZTEdge psztEdge = new PSZTEdge(vIn, vOut, null, null,edgeId);
+            psztEdges.add(psztEdge);
+            Vertex v  = e.inVertex();
+
+        }
+
+        this.vertices = psztVertexes;
+        this.edges = psztEdges;
+
+    }
+    public static PSZTVertex vertexOfId(ArrayList<PSZTVertex> list, String id) {
+        for (PSZTVertex vertex : list) {
+            if(vertex.getId().equals(id)) { return vertex; }
+        }
+        return null;
+    }
+
+
+    public static Graph GraphFromPSZTGraph(PSZTGraph psztGraph) {
+
+        Graph newGraph = TinkerGraph.open();
+        for (PSZTVertex vertex: psztGraph.getVertices()) {
+            Vertex graphVertex = newGraph.addVertex(T.id, vertex.getId());
+//            graphVertex.property("x", vertex.getX());
+//            graphVertex.property("y", vertex.getY());
+        }
+
+        for (PSZTEdge edge: psztGraph.getEdges()) {
+
+            PSZTVertex psztVertexFrom = edge.getFrom();
+            Vertex vertexFromInGraph = vertexOfId(newGraph, psztVertexFrom.getId());
+            PSZTVertex psztVertexTo = edge.getTo();
+            Vertex vertexToInGraph = vertexOfId(newGraph, psztVertexTo.getId());
+
+
+            String edgeId = edge.getId();
+            Edge graphEdge = vertexToInGraph.addEdge("CR", vertexFromInGraph, T.id, edgeId);
+//            graphEdge.property("Ox", edge.getPointX());
+//            graphEdge.property("Oy", edge.getPointY());
+        }
+        return newGraph;
+    }
+
+    private static Vertex vertexOfId(Graph graph, String id) {
+        Iterator<Vertex> vertexIterator = graph.vertices();
+        while(vertexIterator.hasNext()) {
+            Vertex next = vertexIterator.next();
+            String nextId = next.id().toString();
+            if (nextId.equals(id)) {
+                return next;
+            }
+        }
+        return null;
+
+
+    }
+
 }

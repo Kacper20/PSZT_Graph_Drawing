@@ -124,6 +124,8 @@ public class GraphEvolutionGenerator {
             sumOfPopulations.add(newGraph);
         }
 
+
+
         mutatePopulation(sumOfPopulations);
 
 
@@ -138,11 +140,8 @@ public class GraphEvolutionGenerator {
 
     private void mutatePopulation(ArrayList<PSZTGraph> population) {
 
-        for (int i = 0; i < population.size(); i++) {
-
-            PSZTGraph graph = population.get(i);
-
-            for (PSZTVertex v: graph.getVertices()) {
+        for (PSZTGraph graph : population) {
+            for (PSZTVertex v : graph.getVertices()) {
                 NormalDistribution xDistribution = new NormalDistribution(v.getX(), this.variance);
                 NormalDistribution yDistribution = new NormalDistribution(v.getY(), this.variance);
                 v.setX(xDistribution.sample());

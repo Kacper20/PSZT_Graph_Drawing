@@ -4,14 +4,16 @@
 public class PSZTEdge implements Cloneable{
     private PSZTVertex from;
     private PSZTVertex to;
-    private double pointX;
-    private double pointY;
+    private Double pointX;
+    private Double pointY;
+    private String id;
 
-    public PSZTEdge(PSZTVertex from, PSZTVertex to, double pointX, double pointY) {
+    public PSZTEdge(PSZTVertex from, PSZTVertex to, Double pointX, Double pointY, String id) {
         this.from = from;
         this.to = to;
         this.pointX = pointX;
         this.pointY = pointY;
+        this.id = id;
     }
 
     public PSZTVertex getFrom() {
@@ -46,10 +48,25 @@ public class PSZTEdge implements Cloneable{
         this.pointY = pointY;
     }
 
+
+    public String getId() {
+        return id;
+    }
+
     @Override
     protected Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
+
+    public void setPointX(Double pointX) {
+        this.pointX = pointX;
+    }
+
+    public void setPointY(Double pointY) {
+        this.pointY = pointY;
+    }
+
+
     public double getCircleRadius() {
 
         PVector point = new PVector(from.getX(), from.getY());
