@@ -2,7 +2,7 @@ import org.apache.tinkerpop.gremlin.structure.Graph;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * Created by kacper on 30.12.2015.
@@ -28,6 +28,30 @@ public class GraphQualityEvaluator {
     }
 
 
+
+
+
+    private double edgeAnglesDeviation(PSZTGraph graph) {
+
+
+        double value = 0;
+        for (PSZTVertex vertex: graph.getVertices()) {
+
+            java.util.List<PSZTEdge> edges = graph.incidentToVertex(vertex);
+
+            for (PSZTEdge edge: edges) {
+
+            }
+
+
+
+        }
+
+
+
+        return value;
+
+    }
 
     private double relativeErrorOfEdgeLengths(PSZTGraph graph) {
 

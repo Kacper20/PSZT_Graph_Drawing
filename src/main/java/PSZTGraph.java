@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by kacper on 11.01.2016.
@@ -30,6 +32,12 @@ public class PSZTGraph implements Cloneable {
         this.edges = edges;
     }
 
+
+    public List<PSZTEdge> incidentToVertex(PSZTVertex vertex) {
+
+        return this.edges.stream().filter(e -> e.getTo().equals(vertex) || e.getFrom().equals(vertex)).collect(Collectors.toList());
+
+    }
     @Override
     protected Object clone() {
 
