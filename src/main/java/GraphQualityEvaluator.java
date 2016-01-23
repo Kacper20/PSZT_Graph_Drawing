@@ -29,6 +29,7 @@ public class GraphQualityEvaluator {
         double anglesCumulativePunishment = arguments.getVertexAnglesPunishment() * (1 / (edgeAnglesDeviation(graph) + 1));
 
 
+
         return crossingCumulativePunishment + lengthCumulativePunishment + anglesCumulativePunishment;
 
     }
@@ -75,10 +76,13 @@ public class GraphQualityEvaluator {
                 Point2D from = new Point2D.Double(edge.getFrom().getX(), edge.getFrom().getY());
                 Point2D to = new Point2D.Double(edge.getTo().getX(), edge.getTo().getY());
 
+                Point2D middleOfVertex = new Point2D.Double(vertex.getX(), vertex.getY());
 
 
+                double distance = pointToLineDistance(middleOfVertex, from, to);
+                double distancePlusThreshold = arguments.getPreferredVertexRadius() * arguments.getPreferredLength() * 0.05;
 
-
+                if ( distance <= distancePlusThreshold) { sum += 1; }
             }
         }
 
