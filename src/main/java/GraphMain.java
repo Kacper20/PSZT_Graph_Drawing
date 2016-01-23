@@ -29,14 +29,14 @@ public class GraphMain {
 
 
 
-            GraphQualityArguments arguments = new GraphQualityArguments(20);
+            GraphQualityArguments arguments = new GraphQualityArguments();
 
             GraphEvolutionGenerator generator = new GraphEvolutionGenerator(ourGraph, 100, 800, 600, 2, 1);
 
             PSZTGraph firstPop = generator.getPopulation().get(1);
 
-            Graph graph = PSZTGraph.GraphFromPSZTGraph(firstPop);
-            GraphToSVGConverter converter = new GraphToSVGConverter(graph, 800, 600, 12.0);
+//            Graph graph = PSZTGraph.GraphFromPSZTGraph(firstPop);
+            PSZTGraphToSVGConverter converter = new PSZTGraphToSVGConverter(firstPop, 800, 600, 12.0);
 
 //            GraphToSVGConverter graphToSVGConverter = new GraphToSVGConverter(graph, 800, 600, 30.);
 

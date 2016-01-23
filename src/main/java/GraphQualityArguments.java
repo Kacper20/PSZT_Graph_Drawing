@@ -12,6 +12,7 @@ public class GraphQualityArguments {
     private double  preferredVertexRadius;
     private double preferredLength;
 
+    public GraphQualityArguments() {};  // TODO remove!
 
     public GraphQualityArguments(double distancePunishment, double lengthPunishment, double crossingPunishment, double vertexCrossingPunishment, double vertexAnglesPunishment, double preferredVertexRadius, double preferredLength) {
         this.distancePunishment = distancePunishment;
