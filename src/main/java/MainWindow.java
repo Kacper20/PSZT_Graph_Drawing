@@ -14,11 +14,8 @@ import java.util.HashMap;
 public class MainWindow {
 
 
-    public String[] getLabelStrings() {
-        return labelStrings;
-    }
-    
     private String[] labelStrings = {"param1", "param2", "param3", "param4", "param5"};
+    private Double[] defaultValues = {0.0,0.0,0.0,0.0,0.0};
     private JFrame window;
     private JButton setValuesButton;
     private JButton clearButton;
@@ -28,15 +25,6 @@ public class MainWindow {
     private JLabel paramLabel4;
     private JLabel paramLabel5;
     private JLabel[] labels;
-
-    public JLabel[] getLabels() {
-        return labels;
-    }
-
-    public JTextField[] getParams() {
-        return params;
-    }
-
     private JTextField[] params;
     private JTextField param1 ;
     private JTextField param2 ;
@@ -45,6 +33,22 @@ public class MainWindow {
     private JTextField param5 ;
     private JPanel panel;
     private JSVGCanvas svgCanvas;
+
+
+    public JTextField[] getParams() {
+        return params;
+    }
+    public JSVGCanvas getSvgCanvas() {
+        return svgCanvas;
+    }
+    public String[] getLabelStrings() {
+        return labelStrings;
+    }
+    public JLabel[] getLabels() {
+        return labels;
+    }
+
+
 
     public MainWindow()
     {
@@ -61,7 +65,7 @@ public class MainWindow {
                 // init
                 setValuesButton = new JButton("Set Values");
                 clearButton = new JButton("Clear");
-                setValuesButton.addActionListener(new ActionListener()
+                setValuesButton.addActionListener((new ActionListener()
                 {
                     MainWindow m;
                     public void actionPerformed(ActionEvent e)
@@ -69,15 +73,19 @@ public class MainWindow {
                         HashMap<String, Double> values = new HashMap<String, Double>();
 
                         for (int i = 0; i < m.getLabelStrings().length; i++) {
-                            values.put(getLabelStrings()[i], Double.parseDouble(getParams()[i].getText()));
+                            if(!m.getParams()[i].getText().equals(""))
+                                values.put(getLabelStrings()[i], Double.parseDouble(getParams()[i].getText()));
+                            else
+                                values.put(getLabelStrings()[i], defaultValues[i]);
 
                         }
                     }
-                    public void init(MainWindow mm)
+                    public ActionListener init(MainWindow mm)
                     {
                         m = mm;
+                        return this;
                     }
-                });
+                }).init(m));
                 params = new JTextField[labelStrings.length];
                 labels = new JLabel[labelStrings.length];
                 for(int i = 0; i < labelStrings.length; i++)
@@ -87,16 +95,20 @@ public class MainWindow {
 
                 }
 
-                param1 = new JTextField("");
-                param2 = new JTextField("");
-                param3 = new JTextField("");
-                param4 = new JTextField("");
-                param5 = new JTextField("");
-                paramLabel1 = new JLabel("Parametr 1");
-                paramLabel2 = new JLabel("Parametr 2");
-                paramLabel3 = new JLabel("Parametr 3");
-                paramLabel4 = new JLabel("Parametr 4");
-                paramLabel5 = new JLabel("Parametr 5");
+                clearButton.addActionListener((new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        for(JTextField t : m.getParams())
+                        {
+                            t.setText("");
+                        }
+                    }
+                    public ActionListener init(MainWindow mm)
+                    {
+                        m = mm;
+                        return this;
+                    }
+                }).init(m));
                 panel = new JPanel();
                 GridBagConstraints c = new GridBagConstraints();
                 // gridx. gridy, gridwidth, gridheight, ipadx, ipady, weightx, weighty, fill
@@ -135,9 +147,10 @@ public class MainWindow {
 
             }
 
-            public void init(MainWindow mm)
+            public Runnable init(MainWindow mm)
             {
                 m = mm;
+                return this;
             }
 
             public void setConstrainst(GridBagConstraints c, int gridx, int gridy, int gridwidth, int gridheight, int ipadx, int ipady, double weightx, double weighty, int fill)
@@ -157,7 +170,7 @@ public class MainWindow {
             {
                 svgCanvas.setDocument(d);
             }
-        });
+        }.init(this));
     }
 
 
