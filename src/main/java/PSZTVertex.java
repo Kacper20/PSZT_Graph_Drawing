@@ -2,22 +2,21 @@
  * Created by kacper on 11.01.2016.
  */
 public class PSZTVertex implements Cloneable{
-    private int id;
-    private double x;
-    private double y;
+    private String id;
+    private Double x;
+    private Double y;
 
-    public PSZTVertex(int id, double x, double y) {
+    public PSZTVertex(String id, Double x, Double y) {
         this.id = id;
         this.x = x;
         this.y = y;
     }
 
-
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -36,7 +35,6 @@ public class PSZTVertex implements Cloneable{
     public void setY(double y) {
         this.y = y;
     }
-
 
     @Override
     protected Object clone() throws CloneNotSupportedException {
