@@ -68,19 +68,9 @@ public class GraphQualityEvaluator {
         int sum = 0;
         for(PSZTVertex vertex: graph.getVertices()) {
 
-
-
-
-
         }
 
         return sum;
-
-
-
-
-
-
     }
 
     private double relativeErrorOfEdgeLengths(PSZTGraph graph) {
