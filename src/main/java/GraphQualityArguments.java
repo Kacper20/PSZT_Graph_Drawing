@@ -6,8 +6,10 @@ public class GraphQualityArguments {
     private double distancePunishment;
     private double lengthPunishment;
     private double crossingPunishment;
+    private double vertexCrossingPunishment;
 
 
+    private double  preferredVertexRadius;
     private double preferredLength;
     public GraphQualityArguments(int distancePunishment) {
         this.distancePunishment = distancePunishment;
@@ -44,5 +46,22 @@ public class GraphQualityArguments {
 
     public void setPreferredLength(double preferredLength) {
         this.preferredLength = preferredLength;
+    }
+
+
+    public double getVertexCrossingPunishment() {
+        return vertexCrossingPunishment;
+    }
+
+    public void setVertexCrossingPunishment(double vertexCrossingPunishment) {
+        this.vertexCrossingPunishment = vertexCrossingPunishment;
+    }
+
+    public double getPreferredVertexRadius() {
+        return preferredVertexRadius;
+    }
+
+    public void setPreferredVertexRadius(double preferredVertexRadius) {
+        this.preferredVertexRadius = preferredVertexRadius;
     }
 }
