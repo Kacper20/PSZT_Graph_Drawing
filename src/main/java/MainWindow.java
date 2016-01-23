@@ -14,7 +14,7 @@ import java.util.HashMap;
 public class MainWindow {
 
 
-    private String[] labelStrings = {"param1", "param2", "param3", "param4", "param5"};
+    private String[] labelStrings = {"Diameter", "Visibility Field Length", "Visibility Field Width", "Time Limit", "Population Size"};
     private Double[] defaultValues = {0.0,0.0,0.0,0.0,0.0};
     private JFrame window;
     private JButton setValuesButton;
@@ -33,6 +33,8 @@ public class MainWindow {
     private JTextField param5 ;
     private JPanel panel;
     private JSVGCanvas svgCanvas;
+    private JLabel fitness;
+    private JLabel population;
 
 
     public JTextField[] getParams() {
@@ -49,20 +51,22 @@ public class MainWindow {
     }
 
 
-
+    /**
+     * Glowne okno programu
+     */
     public MainWindow()
     {
         EventQueue.invokeLater(new Runnable(){
             MainWindow m;
             public void run()
             {
-                //temporary name for window
-                window = new JFrame("Best Szit Ever");
+
+                window = new JFrame("PSZT_Algorytm_Ewolucyjny");
                 window.setSize(800, 800);
                 window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
                 window.setLayout(new GridBagLayout());
+                // SVG do wyswietlenia w oknie
                 svgCanvas = new JSVGCanvas();
-                // init
                 setValuesButton = new JButton("Set Values");
                 clearButton = new JButton("Clear");
                 setValuesButton.addActionListener((new ActionListener()
@@ -79,6 +83,7 @@ public class MainWindow {
                                 values.put(getLabelStrings()[i], defaultValues[i]);
 
                         }
+
                     }
                     public ActionListener init(MainWindow mm)
                     {
@@ -109,19 +114,25 @@ public class MainWindow {
                         return this;
                     }
                 }).init(m));
+                fitness = new JLabel("Przystosowanie:");
+                population = new JLabel("Populacja:");
                 panel = new JPanel();
                 GridBagConstraints c = new GridBagConstraints();
-                // gridx. gridy, gridwidth, gridheight, ipadx, ipady, weightx, weighty, fill
-                int xoffset;
+                // ustawianie komponentow w oknie
+                int xoffset, length;
                 for(int i = 0; i < labels.length; i++)
                 {
-                    if(i <= labels.length/2)
+                    if(i <= labels.length/2) {
                         xoffset = 1;
-                    else
-                        xoffset = 5;
-                    this.setConstrainst(c, xoffset+1, i%(labels.length/2 + 1), 3, 1, 0, 0, 3, 1, GridBagConstraints.HORIZONTAL);
+                        length = 1;
+                    }
+                    else {
+                        xoffset = 3;
+                        length = 2;
+                    }
+                    this.setConstrainst(c, xoffset+1, i%(labels.length/2 + 1), length, 1, 0, 0, length, 1, GridBagConstraints.HORIZONTAL);
                     window.getContentPane().add(params[i], c);
-                    this.setConstrainst(c, xoffset, i%(labels.length/2 + 1), 1, 1, 0, 0, 1, 1, GridBagConstraints.NONE);
+                    this.setConstrainst(c, xoffset, i%(labels.length/2 + 1), length, 1, 0, 0, length, 1, GridBagConstraints.NONE);
                     window.getContentPane().add(labels[i], c);
                 }
 
@@ -129,7 +140,11 @@ public class MainWindow {
                 window.getContentPane().add(setValuesButton, c);
                 this.setConstrainst(c, 2, labels.length/2 +1 , 1, 1, 0, 0, 1, 1, GridBagConstraints.NONE);
                 window.getContentPane().add(clearButton, c);
-                this.setConstrainst(c, 0, labels.length/2 +2, 9, 1, 0, 0, 40, 60, GridBagConstraints.BOTH);
+                this.setConstrainst(c, 3, labels.length/2 +1 , 1, 1, 0, 0, 1, 1, GridBagConstraints.NONE);
+                window.getContentPane().add(fitness, c);
+                this.setConstrainst(c, 5, labels.length/2 +1 , 1, 1, 0, 0, 1, 1, GridBagConstraints.NONE);
+                window.getContentPane().add(population, c);
+                this.setConstrainst(c, 0, labels.length/2 +2, 10, 1, 0, 0, 40, 60, GridBagConstraints.BOTH);
                 window.getContentPane().add(panel, c);
                 panel.setLayout(new GridBagLayout());
                 this.setConstrainst(c, 1, 1, 1, 1, 0, 0, 1, 1, GridBagConstraints.BOTH);
