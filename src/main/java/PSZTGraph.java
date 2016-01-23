@@ -66,7 +66,7 @@ public class PSZTGraph implements Cloneable {
 
         while (vertexIterator.hasNext()) {
             Vertex v = vertexIterator.next();
-            String id = (String)v.id();
+            String id = String.valueOf(v.id());
 
             double x = (Double)v.property("x").value();
             double y = (Double)v.property("y").value();
