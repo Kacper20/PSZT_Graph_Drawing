@@ -25,7 +25,7 @@ public class GraphEvolutionGenerator {
     private double variance;
 
     private GraphQualityEvaluator evaluator;
-    public GraphEvolutionGenerator(PSZTGraph graph, int populationSize, int canvasWidth, int canvasHeight, double vertexDiameter, double variance){
+    public GraphEvolutionGenerator(PSZTGraph graph, GraphQualityArguments arguments, int populationSize, int canvasWidth, int canvasHeight, double vertexDiameter, double variance){
         this.graph = graph;
         this.populationSize = populationSize;
         this.canvasWidth = canvasWidth;
@@ -33,7 +33,7 @@ public class GraphEvolutionGenerator {
         this.vertexDiameter = vertexDiameter;
 
         this.variance = variance;
-        this.evaluator = new GraphQualityEvaluator(new GraphQualityArguments());
+        this.evaluator = new GraphQualityEvaluator(arguments);
         population = generateStartingPopulation(graph, populationSize);
 
 
@@ -55,7 +55,6 @@ public class GraphEvolutionGenerator {
         }
 
         for (PSZTEdge edge: graph.getEdges()) {
-
 
 
             double midPointX = (edge.getFrom().getX() + edge.getTo().getX()) / 2.0;
@@ -226,12 +225,12 @@ public class GraphEvolutionGenerator {
     }
 
     synchronized PSZTGraph stopAlgorithm() {
-        return getBestGraphFromCurrentPopulation();
+        return getBestGraphFromCurrentPopulation().getValue0();
     }
 
 
-    PSZTGraph getBestGraphFromCurrentPopulation() {
-        return Collections.max(this.population, new Comparator<PSZTGraph>() {
+    Pair<PSZTGraph, Double>getBestGraphFromCurrentPopulation() {
+        PSZTGraph graph = Collections.max(this.population, new Comparator<PSZTGraph>() {
             public int compare(PSZTGraph o1, PSZTGraph o2) {
                 double quality1 = evaluator.qualityOfGraph(o1);
                 double quality2 = evaluator.qualityOfGraph(o2);
@@ -240,6 +239,7 @@ public class GraphEvolutionGenerator {
                 return 0;
             }
         });
-
+        double value = evaluator.qualityOfGraph(graph);
+        return new Pair<PSZTGraph, Double>(graph, value);
     }
 }

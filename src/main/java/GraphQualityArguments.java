@@ -24,6 +24,11 @@ public class GraphQualityArguments {
         this.preferredLength = preferredLength;
     }
 
+    public GraphQualityArguments(double preferredLength, double preferredVertexRadius) {
+        this.preferredLength = preferredLength;
+        this.preferredVertexRadius = preferredVertexRadius;
+    }
+
     public double getDistancePunishment() {
         return distancePunishment;
     }
