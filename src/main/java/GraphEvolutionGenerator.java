@@ -1,4 +1,5 @@
 
+import org.apache.commons.math3.distribution.NormalDistribution;
 import org.javatuples.Pair;
 
 import java.lang.reflect.Array;
@@ -21,15 +22,17 @@ public class GraphEvolutionGenerator {
     private int canvasWidth;
     private int canvasHeight;
     private double vertexDiameter;
+    private double variance;
 
     private GraphQualityEvaluator evaluator;
-    public GraphEvolutionGenerator(PSZTGraph graph, int populationSize, int canvasWidth, int canvasHeight, double vertexDiameter){
+    public GraphEvolutionGenerator(PSZTGraph graph, int populationSize, int canvasWidth, int canvasHeight, double vertexDiameter, double variance){
         this.graph = graph;
         this.populationSize = populationSize;
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
         this.vertexDiameter = vertexDiameter;
 
+        this.variance = variance;
         this.evaluator = new GraphQualityEvaluator(new GraphQualityArguments(20));
         population = generateStartingPopulation(graph, populationSize);
 
@@ -48,11 +51,18 @@ public class GraphEvolutionGenerator {
 
         for (PSZTEdge edge: graph.getEdges()) {
 
-            double randomX = ThreadLocalRandom.current().nextDouble(- canvasWidth, 2 * canvasWidth);
-            double randomY = ThreadLocalRandom.current().nextDouble(- canvasHeight, 2 * canvasHeight);
 
-            edge.setPointX(randomX);
-            edge.setPointY(randomY);
+
+            double midPointX = (edge.getFrom().getX() + edge.getTo().getX()) / 2.0;
+            double midPointY = (edge.getFrom().getY() + edge.getTo().getY() / 2.0);
+
+
+
+//            double randomX = ThreadLocalRandom.current().nextDouble(- canvasWidth, 2 * canvasWidth);
+//            double randomY = ThreadLocalRandom.current().nextDouble(- canvasHeight, 2 * canvasHeight);
+
+            edge.setPointX(midPointX);
+            edge.setPointY(midPointY);
         }
         return graph;
 
@@ -88,6 +98,9 @@ public class GraphEvolutionGenerator {
             }
         });
 
+        //Now population is sorted in list.
+
+
         double percentOfPopulationToRemove = 0.5;
         int elementsToRemove = this.populationSize * (int)percentOfPopulationToRemove;
 
@@ -112,15 +125,34 @@ public class GraphEvolutionGenerator {
         }
 
         mutatePopulation(sumOfPopulations);
+
+
         return sumOfPopulations;
     }
 
+
+
+
+    //Mutation is performed by adding independent Gaussian noise to each of vertices.
+    //
+
     private void mutatePopulation(ArrayList<PSZTGraph> population) {
 
+        for (int i = 0; i < population.size(); i++) {
 
+            PSZTGraph graph = population.get(i);
 
-
+            for (PSZTVertex v: graph.getVertices()) {
+                NormalDistribution xDistribution = new NormalDistribution(v.getX(), this.variance);
+                NormalDistribution yDistribution = new NormalDistribution(v.getY(), this.variance);
+                v.setX(xDistribution.sample());
+                v.setY(yDistribution.sample());
+            }
+        }
     }
+
+
+
 
     private PSZTGraph crossPopulation(PSZTGraph graph1, PSZTGraph graph2) {
 
@@ -197,8 +229,8 @@ public class GraphEvolutionGenerator {
     PSZTGraph getBestGraphFromCurrentPopulation() {
         return Collections.max(this.population, new Comparator<PSZTGraph>() {
             public int compare(PSZTGraph o1, PSZTGraph o2) {
-                int quality1 = evaluator.qualityOfGraph(o1);
-                int quality2 = evaluator.qualityOfGraph(o2);
+                double quality1 = evaluator.qualityOfGraph(o1);
+                double quality2 = evaluator.qualityOfGraph(o2);
                 if (quality1 > quality2) { return 1; }
                 if (quality1 < quality2) { return -1; }
                 return 0;
