@@ -33,7 +33,7 @@ public class GraphEvolutionGenerator {
         this.vertexDiameter = vertexDiameter;
 
         this.variance = variance;
-        this.evaluator = new GraphQualityEvaluator(new GraphQualityArguments(20));
+        this.evaluator = new GraphQualityEvaluator(new GraphQualityArguments());
         population = generateStartingPopulation(graph, populationSize);
 
 
