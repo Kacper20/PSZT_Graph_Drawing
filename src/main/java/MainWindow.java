@@ -14,8 +14,8 @@ import java.util.HashMap;
 public class MainWindow {
 
 
-    private String[] labelStrings = {"Diameter", "Visibility Field Length", "Visibility Field Width", "Time Limit", "Wielkosc Populacji"};
-    private Double[] defaultValues = {0.0,0.0,0.0,0.0, 0.0};
+    private String[] labelStrings = {"Diameter", "Visibility Field Length", "Visibility Field Width", "Time Limit", "Population Size"};
+    private Double[] defaultValues = {0.0,0.0,0.0,0.0,0.0};
     private JFrame window;
     private JButton setValuesButton;
     private JButton clearButton;
@@ -83,7 +83,7 @@ public class MainWindow {
                                 values.put(getLabelStrings()[i], defaultValues[i]);
 
                         }
-                        System.out.println(values);
+
                     }
                     public ActionListener init(MainWindow mm)
                     {
