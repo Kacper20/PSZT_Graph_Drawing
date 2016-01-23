@@ -68,7 +68,9 @@ public class PSZTGraph implements Cloneable {
             Vertex v = vertexIterator.next();
             String id = (String)v.id();
 
-            PSZTVertex vertex = new PSZTVertex(id, null, null);
+            double x = (Double)v.property("x").value();
+            double y = (Double)v.property("y").value();
+            PSZTVertex vertex = new PSZTVertex(id, x, y);
             psztVertexes.add(vertex);
         }
 
@@ -83,6 +85,7 @@ public class PSZTGraph implements Cloneable {
 
             PSZTVertex vIn = vertexOfId(psztVertexes, inVertexId);
             assert(vIn != null);
+
 
             Vertex out = e.outVertex();
             String outVertexId = out.id().toString();
