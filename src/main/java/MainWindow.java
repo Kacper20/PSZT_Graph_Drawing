@@ -113,16 +113,16 @@ public class MainWindow {
                 GridBagConstraints c = new GridBagConstraints();
                 // gridx. gridy, gridwidth, gridheight, ipadx, ipady, weightx, weighty, fill
                 int xoffset;
-                for(int i = 1; i <= labels.length; i++)
+                for(int i = 0; i < labels.length; i++)
                 {
                     if(i <= labels.length/2)
                         xoffset = 1;
                     else
                         xoffset = 5;
                     this.setConstrainst(c, xoffset+1, i%(labels.length/2 + 1), 3, 1, 0, 0, 3, 1, GridBagConstraints.HORIZONTAL);
-                    window.getContentPane().add(params[i-1], c);
+                    window.getContentPane().add(params[i], c);
                     this.setConstrainst(c, xoffset, i%(labels.length/2 + 1), 1, 1, 0, 0, 1, 1, GridBagConstraints.NONE);
-                    window.getContentPane().add(labels[i-1], c);
+                    window.getContentPane().add(labels[i], c);
                 }
 
                 this.setConstrainst(c, 1, labels.length/2 + 1, 1, 1, 0, 0, 1, 1, GridBagConstraints.NONE);
