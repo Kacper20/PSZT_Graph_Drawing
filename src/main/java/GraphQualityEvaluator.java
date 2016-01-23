@@ -23,8 +23,13 @@ public class GraphQualityEvaluator {
         initialQuality -= numberOfCrossings(graph) * arguments.getCrossingPunishment();
 
 
+        double crossingCumulativePunishment = arguments.getCrossingPunishment() * ( 1 / (numberOfCrossings(graph) + 1));
+        double lengthCumulativePunishment = arguments.getLengthPunishment() * (1 / (relativeErrorOfEdgeLengths(graph) + 1));
+        double anglesCumulativePunishment = arguments.getVertexAnglesPunishment() * (1 / (edgeAnglesDeviation(graph) + 1));
 
-        return 0;
+
+        return crossingCumulativePunishment + lengthCumulativePunishment + anglesCumulativePunishment;
+
     }
 
 
@@ -50,21 +55,9 @@ public class GraphQualityEvaluator {
                     double angle = angleBetween2Lines(firstLine, secondLine);
                     double val = 2 * Math.PI / (double)edges.size();
                     value += angle - val;
-
-
-
-
                 }
-
-
-
             }
-
-
-
         }
-
-
 
         return value;
 
