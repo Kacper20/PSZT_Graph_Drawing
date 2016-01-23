@@ -66,9 +66,18 @@ public class PSZTGraph implements Cloneable {
 
         while (vertexIterator.hasNext()) {
             Vertex v = vertexIterator.next();
-            String id = (String)v.id();
+            String id = String.valueOf(v.id());
 
-            PSZTVertex vertex = new PSZTVertex(id, null, null);
+
+            Double x = null;
+            Double y = null;
+            if (v.property("x").isPresent()) {
+                x = (double)v.property("x").value();
+            }
+            if (v.property("x").isPresent()) {
+                y = (double)v.property("y").value();
+            }
+            PSZTVertex vertex = new PSZTVertex(id, x, y);
             psztVertexes.add(vertex);
         }
 
@@ -83,6 +92,7 @@ public class PSZTGraph implements Cloneable {
 
             PSZTVertex vIn = vertexOfId(psztVertexes, inVertexId);
             assert(vIn != null);
+
 
             Vertex out = e.outVertex();
             String outVertexId = out.id().toString();
@@ -114,8 +124,8 @@ public class PSZTGraph implements Cloneable {
         Graph newGraph = TinkerGraph.open();
         for (PSZTVertex vertex: psztGraph.getVertices()) {
             Vertex graphVertex = newGraph.addVertex(T.id, vertex.getId());
-//            graphVertex.property("x", vertex.getX());
-//            graphVertex.property("y", vertex.getY());
+            graphVertex.property("x", vertex.getX());
+            graphVertex.property("y", vertex.getY());
         }
 
         for (PSZTEdge edge: psztGraph.getEdges()) {
@@ -128,8 +138,8 @@ public class PSZTGraph implements Cloneable {
 
             String edgeId = edge.getId();
             Edge graphEdge = vertexToInGraph.addEdge("CR", vertexFromInGraph, T.id, edgeId);
-//            graphEdge.property("Ox", edge.getPointX());
-//            graphEdge.property("Oy", edge.getPointY());
+            graphEdge.property("Ox", edge.getPointX());
+            graphEdge.property("Oy", edge.getPointY());
         }
         return newGraph;
     }
