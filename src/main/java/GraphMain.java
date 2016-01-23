@@ -1,12 +1,9 @@
-import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Graph;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.io.IoCore;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
 import org.w3c.dom.Document;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 /**
  * Created by kacper on 30.12.2015.
@@ -18,7 +15,7 @@ public class GraphMain {
 
         MainWindow w = new MainWindow();
 
-        Document testingDocument = GraphToSVGConverter.getTestingDocument();
+        Document testingDocument = PSZTGraphToSVGConverter.getTestingDocument();
 
         w.getSvgCanvas().setDocument(testingDocument);
 
