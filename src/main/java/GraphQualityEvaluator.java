@@ -39,7 +39,24 @@ public class GraphQualityEvaluator {
 
             java.util.List<PSZTEdge> edges = graph.incidentToVertex(vertex);
 
-            for (PSZTEdge edge: edges) {
+            for (int i = 0; i < edges.size(); i++) {
+                for (int j = i + 1; j < edges.size(); j++) {
+                    PSZTEdge first = edges.get(i);
+                    PSZTEdge second = edges.get(j);
+
+                    Line2D.Double firstLine = new Line2D.Double(first.getFrom().getX(), first.getFrom().getY(), first.getTo().getX(), first.getTo().getY());
+                    Line2D.Double secondLine = new Line2D.Double(second.getFrom().getX(), second.getFrom().getY(), second.getTo().getX(), second.getTo().getY());
+
+                    double angle = angleBetween2Lines(firstLine, secondLine);
+                    double val = 2 * Math.PI / (double)edges.size();
+                    value += angle - val;
+
+
+
+
+                }
+
+
 
             }
 
@@ -50,6 +67,26 @@ public class GraphQualityEvaluator {
 
 
         return value;
+
+    }
+
+    private int numberOfVerticesCrossings(PSZTGraph graph) {
+
+        int sum = 0;
+        for(PSZTVertex vertex: graph.getVertices()) {
+
+
+
+
+
+        }
+
+        return sum;
+
+
+
+
+
 
     }
 
@@ -112,8 +149,17 @@ public class GraphQualityEvaluator {
 
     }
 
+    private  static double angleBetween2Lines(Line2D line1, Line2D line2)
+    {
+        double angle1 = Math.atan2(line1.getY1() - line1.getY2(),
+                line1.getX1() - line1.getX2());
+        double angle2 = Math.atan2(line2.getY1() - line2.getY2(),
+                line2.getX1() - line2.getX2());
+        return angle1-angle2;
+    }
 
-    static Point get_line_intersection(Line2D.Double pLine1, Line2D.Double pLine2)
+
+    private static Point get_line_intersection(Line2D.Double pLine1, Line2D.Double pLine2)
     {
         Point
                 result = null;
