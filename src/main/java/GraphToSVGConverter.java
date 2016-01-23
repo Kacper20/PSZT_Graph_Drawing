@@ -87,16 +87,34 @@ public class GraphToSVGConverter {
             Double v2x = (Double) v2.property("x").value();
             Double v2y = (Double) v2.property("y").value();
 
-            Double ox = (Double) e.property("Ox").value();
-            Double oy = (Double) e.property("Oy").value();
+//            Double ox = (Double) e.property("Ox").value();
+//            Double oy = (Double) e.property("Oy").value();
             // TODO draw arc
 
+//            x1 = 2*xc - x0/2 - x2/2
+//            y1 = 2*yc - y0/2 - y2/2
+
+//            Double hvx = 2*ox - v1x/2 - v2x/2;
+//            Double hvy = 2*oy - v1y/2 - v2y/2;
+
             // TODO hardcoded
-            Element path = doc.createElementNS(null, "path");
+            Element path = doc.createElementNS(null, "line");
+            path.setAttributeNS(null, "x1", v1x.toString());
+            path.setAttributeNS(null, "y1", v1y.toString());
+            path.setAttributeNS(null, "x2", v2x.toString());
+            path.setAttributeNS(null, "y2", v2y.toString());
+//            path.setAttributeNS(null, "style", "stroke:rgb(255,0,0);stroke-width:2");
+
+            // Element path = doc.createElementNS(null, "path");
             path.setAttributeNS(null, "stroke", "blue");
             path.setAttributeNS(null, "stroke-width", "4");
-            path.setAttributeNS(null, "fill-opacity", "0");
-            path.setAttributeNS(null, "d", "M "+v2x+","+v2y+" A "+ox+","+oy+" 0 0,1 "+v1x+","+v1y);
+            // path.setAttributeNS(null, "fill-opacity", "0");
+
+            // bezier
+            // path.setAttributeNS(null, "d", "M "+v1x+" "+v1y+"Q "+hvx+" "+hvy+" "+v2x+" "+v2y);
+
+            // arc on circle
+            //path.setAttributeNS(null, "d", "M "+v2x+","+v2y+" A "+ox+","+oy+" 0 0,1 "+v1x+","+v1y);
             // M x y A rad rad rot=0 1,0 x,y Z
 
             svgRoot.appendChild(path);
@@ -105,7 +123,7 @@ public class GraphToSVGConverter {
         return doc;
     }
 
-    public static void test() {
+    public static Document getTestingDocument() throws IOException {
         Graph g = TinkerGraph.open();
         Vertex v1 = g.addVertex("first");
         v1.property("x", 100.);
@@ -116,9 +134,9 @@ public class GraphToSVGConverter {
         v2.property("y", 100.);
 
         Edge e1 = v1.addEdge("edge", v2);
-        e1.property("Ox", 100.);
-        e1.property("Oy", 100.);
-        e1.property("r", 100.);
+//        e1.property("Ox", 100.+100.*.707);
+//        e1.property("Oy", 100.+100.*.707);
+//        e1.property("r", 100.);
 
         Vertex v3 = g.addVertex("first");
         v3.property("x", 400.);
@@ -129,14 +147,20 @@ public class GraphToSVGConverter {
         v4.property("y", 100.);
 
         Edge e2 = v4.addEdge("edge", v3);
-        e2.property("Ox", 400.);
-        e2.property("Oy", 100.);
-        e2.property("r", 100.);
+//        e2.property("Ox", 400.+100.*.707);
+//        e2.property("Oy", 100.+100.*.707);
+//        e2.property("r", 100.);
 
 
         GraphToSVGConverter conv = new GraphToSVGConverter(g, 600, 400, 30.);
+        Document doc = conv.generateDocument();
+
+        return doc;
+    }
+
+    public static void main(String[] args) throws IOException {
+        Document doc = GraphToSVGConverter.getTestingDocument();
         try {
-            Document doc = conv.generateDocument();
             GraphToSVGConverter.saveDocumentToSVG(doc, "/tmp/test.svg");
         } catch (IOException e) {
             e.printStackTrace();
