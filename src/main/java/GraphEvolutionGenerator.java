@@ -38,6 +38,11 @@ public class GraphEvolutionGenerator {
 
 
     }
+
+    public ArrayList<PSZTGraph> getPopulation() {
+        return population;
+    }
+
     private PSZTGraph generateRandomGraph(PSZTGraph graph) {
 
 

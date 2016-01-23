@@ -114,8 +114,8 @@ public class PSZTGraph implements Cloneable {
         Graph newGraph = TinkerGraph.open();
         for (PSZTVertex vertex: psztGraph.getVertices()) {
             Vertex graphVertex = newGraph.addVertex(T.id, vertex.getId());
-//            graphVertex.property("x", vertex.getX());
-//            graphVertex.property("y", vertex.getY());
+            graphVertex.property("x", vertex.getX());
+            graphVertex.property("y", vertex.getY());
         }
 
         for (PSZTEdge edge: psztGraph.getEdges()) {
@@ -128,8 +128,8 @@ public class PSZTGraph implements Cloneable {
 
             String edgeId = edge.getId();
             Edge graphEdge = vertexToInGraph.addEdge("CR", vertexFromInGraph, T.id, edgeId);
-//            graphEdge.property("Ox", edge.getPointX());
-//            graphEdge.property("Oy", edge.getPointY());
+            graphEdge.property("Ox", edge.getPointX());
+            graphEdge.property("Oy", edge.getPointY());
         }
         return newGraph;
     }

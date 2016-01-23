@@ -19,40 +19,50 @@ public class GraphMain {
 
         w.getSvgCanvas().setDocument(testingDocument);
 
-        
+
         try {
             Graph graphToDraw = TinkerGraph.open();
             graphToDraw.io(IoCore.graphml()).readGraph("input.xml");
 
             PSZTGraph ourGraph = new PSZTGraph(graphToDraw);
 
-            Graph converted = PSZTGraph.GraphFromPSZTGraph(ourGraph);
 
+
+
+            GraphQualityArguments arguments = new GraphQualityArguments(20);
+
+            GraphEvolutionGenerator generator = new GraphEvolutionGenerator(ourGraph, 100, 800, 600, 2, 1);
+
+            PSZTGraph firstPop = generator.getPopulation().get(1);
+
+            Graph graph = PSZTGraph.GraphFromPSZTGraph(firstPop);
+            GraphToSVGConverter converter = new GraphToSVGConverter(graph, 800, 600, 12.0);
+
+//            GraphToSVGConverter graphToSVGConverter = new GraphToSVGConverter(graph, 800, 600, 30.);
+
+//randomowy comment ^^.
+            //drugi randomowy comment ^_^
+            //i trzeci komencik < 3
+            //xDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDXdDxDXDXDxDXDxDXDxDxDxDxDxDxDxDxDxDxD
+            converter.doTheMagic();
+            converter.getSvgDraw().show();
+
+
+
+
+
+
+
+
+
+
+
+
+            Graph converted = PSZTGraph.GraphFromPSZTGraph(ourGraph);
             converted.io(IoCore.graphml()).writeGraph("converted.xml");
             System.out.println(ourGraph.getVertices().size());
 
 
-
-
-
-
-//
-////            graph.io(IoCore.graphml()).writeGraph("test.xml");
-//            GraphEvolutionGenerator generator = new GraphEvolutionGenerator(graphToDraw);
-//
-//            GraphQualityEvaluator evaluator = new GraphQualityEvaluator(maxNumberOfIterations, desiredQuality);
-//            Graph newEvolution;
-//            while (true) {
-//                newEvolution = generator.getGraphWithCoordinates();
-//                if (evaluator.isGraphGoodEnough(newEvolution)) { break; }
-//                else {
-//                    GraphDrawer.draw(newEvolution);
-//                }
-//            }
-//
-//            //Draw final graph and write it to output file.
-//            newEvolution.io(IoCore.graphml()).writeGraph("output.xml");
-//            GraphDrawer.draw(newEvolution);
 
 
         } catch (IOException e) {

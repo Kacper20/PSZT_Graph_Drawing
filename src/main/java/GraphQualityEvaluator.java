@@ -2,6 +2,7 @@ import org.apache.tinkerpop.gremlin.structure.Graph;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.util.*;
 
 /**
@@ -26,6 +27,7 @@ public class GraphQualityEvaluator {
         double crossingCumulativePunishment = arguments.getCrossingPunishment() * ( 1 / (numberOfCrossings(graph) + 1));
         double lengthCumulativePunishment = arguments.getLengthPunishment() * (1 / (relativeErrorOfEdgeLengths(graph) + 1));
         double anglesCumulativePunishment = arguments.getVertexAnglesPunishment() * (1 / (edgeAnglesDeviation(graph) + 1));
+
 
 
         return crossingCumulativePunishment + lengthCumulativePunishment + anglesCumulativePunishment;
@@ -68,6 +70,20 @@ public class GraphQualityEvaluator {
         int sum = 0;
         for(PSZTVertex vertex: graph.getVertices()) {
 
+            for(PSZTEdge edge: graph.getEdges()) {
+
+
+                Point2D from = new Point2D.Double(edge.getFrom().getX(), edge.getFrom().getY());
+                Point2D to = new Point2D.Double(edge.getTo().getX(), edge.getTo().getY());
+
+                Point2D middleOfVertex = new Point2D.Double(vertex.getX(), vertex.getY());
+
+
+                double distance = pointToLineDistance(middleOfVertex, from, to);
+                double distancePlusThreshold = arguments.getPreferredVertexRadius() * arguments.getPreferredLength() * 0.05;
+
+                if ( distance <= distancePlusThreshold) { sum += 1; }
+            }
         }
 
         return sum;
@@ -141,6 +157,11 @@ public class GraphQualityEvaluator {
         return angle1-angle2;
     }
 
+
+    public double pointToLineDistance(Point2D A, Point2D B, Point2D P) {
+        double normalLength = Math.sqrt((B.getX()-A.getX())*(B.getX()-A.getX())+(B.getY()-A.getY())*(B.getY()-A.getY()));
+        return Math.abs((P.getX()-A.getX())*(B.getY()-A.getY())-(P.getY()-A.getY())*(B.getX()-A.getX()))/normalLength;
+    }
 
     private static Point get_line_intersection(Line2D.Double pLine1, Line2D.Double pLine2)
     {
