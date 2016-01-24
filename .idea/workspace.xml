@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c01b6c66-fbe3-440f-b6ad-decb66bb9423" name="Default" comment="">
+    <list default="true" id="c01b6c66-fbe3-440f-b6ad-decb66bb9423" name="Default" comment="Dodanie">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/MainWindow.java" afterPath="$PROJECT_DIR$/src/main/java/MainWindow.java" />
     </list>
@@ -43,8 +43,8 @@
       <file leaf-file-name="MainWindow.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/MainWindow.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.5285714">
-              <caret line="145" column="27" selection-start-line="145" selection-start-column="27" selection-end-line="145" selection-end-column="27" />
+            <state vertical-scroll-proportion="0.4857143">
+              <caret line="226" column="64" selection-start-line="226" selection-start-column="64" selection-end-line="226" selection-end-column="64" />
               <folding>
                 <element signature="e#1089#1090#0" expanded="true" />
                 <element signature="e#1130#1131#0" expanded="true" />
@@ -57,8 +57,8 @@
                 <element signature="e#1378#1379#0" expanded="true" />
                 <element signature="e#1407#1408#0" expanded="true" />
                 <element signature="e#2328#2344#0" expanded="true" />
-                <element signature="e#7724#7725#0" expanded="true" />
-                <element signature="e#7780#7781#0" expanded="true" />
+                <element signature="e#7718#7719#0" expanded="true" />
+                <element signature="e#7774#7775#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -1392,7 +1392,7 @@
       <workItem from="1453588504779" duration="1162000" />
       <workItem from="1453589756428" duration="8626000" />
       <workItem from="1453598947780" duration="3332000" />
-      <workItem from="1453602330172" duration="2774000" />
+      <workItem from="1453602330172" duration="2981000" />
     </task>
     <task id="LOCAL-00001" summary="Dodany projekt maven wraz z biblioteka tinkerpop.&#10;Dodane czytanie grafu z pliku w formacie GraphML do pamieci.">
       <created>1451472585714</created>
@@ -1430,11 +1430,17 @@
       <option name="project" value="LOCAL" />
       <updated>1453607348686</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Ustawienie domyślnych parametrów">
+      <created>1453607640888</created>
+      <option name="number" value="00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1453607640888</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="63963000" />
+    <option name="totallyTimeSpent" value="64170000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="0" width="1922" height="1055" extended-state="6" />
@@ -2383,8 +2389,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/MainWindow.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5285714">
-          <caret line="145" column="27" selection-start-line="145" selection-start-column="27" selection-end-line="145" selection-end-column="27" />
+        <state vertical-scroll-proportion="0.4857143">
+          <caret line="226" column="64" selection-start-line="226" selection-start-column="64" selection-end-line="226" selection-end-column="64" />
           <folding>
             <element signature="e#1089#1090#0" expanded="true" />
             <element signature="e#1130#1131#0" expanded="true" />
@@ -2397,8 +2403,8 @@
             <element signature="e#1378#1379#0" expanded="true" />
             <element signature="e#1407#1408#0" expanded="true" />
             <element signature="e#2328#2344#0" expanded="true" />
-            <element signature="e#7724#7725#0" expanded="true" />
-            <element signature="e#7780#7781#0" expanded="true" />
+            <element signature="e#7718#7719#0" expanded="true" />
+            <element signature="e#7774#7775#0" expanded="true" />
           </folding>
         </state>
       </provider>

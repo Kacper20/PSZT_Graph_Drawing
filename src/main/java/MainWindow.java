@@ -135,8 +135,8 @@ public class MainWindow {
                         return this;
                     }
                 }).init(m));
-                fitness = new JLabel("Przystosowanie:");
-                population = new JLabel("Populacja:");
+                fitness = new JLabel("Fitness:");
+                population = new JLabel("Population:");
                 panel = new JPanel();
                 GridBagConstraints c = new GridBagConstraints();
                 // ustawianie komponentow w oknie
@@ -223,7 +223,8 @@ public class MainWindow {
             }
             org.javatuples.Pair<PSZTGraph, Double> bestGraph = generator.getBestGraphFromCurrentPopulation();
 //            PSZTGraph graphTest = generator.
-            System.out.println("yolo:"+bestGraph.getValue1());
+//            System.out.println("yolo:"+bestGraph.getValue1());
+            fitness.setText("Fitness: " + bestGraph.getValue1());
             PSZTGraphToSVGConverter converter = new PSZTGraphToSVGConverter(bestGraph.getValue0(), map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), map.get("Radius"));
             converter.doTheMagic();
             Document doc = converter.getSvgDraw().getDoc();
