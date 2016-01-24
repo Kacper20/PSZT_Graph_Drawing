@@ -19,7 +19,7 @@ public class MainWindow {
 
 
     private String[] labelStrings = {"Radius", "Edge Length", "Visibility Field Width", "Visibility Field Height", "Time Limit", "Population Size"};
-    private Double[] defaultValues = {30.0,100.0,800.0,600.0,1.0, 5.0};
+    private Double[] defaultValues = {0.0,0.0,0.0,0.0,0.0, 0.0};
     private JFrame window;
     private JButton setValuesButton;
     private JButton clearButton;
@@ -33,11 +33,10 @@ public class MainWindow {
     private JLabel population;
     private PSZTGraph ourGraph;
 
-//    private SwingWorker worker;
-
     public void setPsztGraph(PSZTGraph psztGraph) {
         this.ourGraph = psztGraph;
     }
+
     public JTextField[] getParams() {
         return params;
     }
@@ -61,6 +60,7 @@ public class MainWindow {
             MainWindow m;
             public void run()
             {
+
                 window = new JFrame("PSZT_Algorytm_Ewolucyjny");
                 window.setSize(800, 800);
                 window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -81,7 +81,9 @@ public class MainWindow {
                                 values.put(getLabelStrings()[i], Double.parseDouble(getParams()[i].getText()));
                             else
                                 values.put(getLabelStrings()[i], defaultValues[i]);
+
                         }
+
                         SwingWorker worker = new SwingWorker<Void, Void>()
                         {
                             public SwingWorker init(MainWindow m, HashMap h) {
@@ -97,9 +99,12 @@ public class MainWindow {
                                 m.startGraphsGeneration(h);
                                 return null;
                             }
+
                         }.init(m, values);
 
                         worker.execute();
+
+
                     }
                     public ActionListener init(MainWindow mm)
                     {
@@ -109,10 +114,13 @@ public class MainWindow {
                 }).init(m));
                 params = new JTextField[labelStrings.length];
                 labels = new JLabel[labelStrings.length];
-                for(int i = 0; i < labelStrings.length; i++) {
+                for(int i = 0; i < labelStrings.length; i++)
+                {
                     params[i] = new JTextField("");
                     labels[i] = new JLabel(labelStrings[i]);
+
                 }
+
                 clearButton.addActionListener((new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -135,7 +143,7 @@ public class MainWindow {
                 int xoffset, length;
                 for(int i = 0; i < labels.length; i++)
                 {
-                    if(i < labels.length/2) {
+                    if(i <= labels.length/2) {
                         xoffset = 1;
                         length = 1;
                     }
@@ -148,6 +156,7 @@ public class MainWindow {
                     this.setConstrainst(c, xoffset, i%(labels.length/2 + 1), length, 1, 0, 0, length, 1, GridBagConstraints.NONE);
                     window.getContentPane().add(labels[i], c);
                 }
+
                 this.setConstrainst(c, 1, labels.length/2 + 1, 1, 1, 0, 0, 1, 1, GridBagConstraints.NONE);
                 window.getContentPane().add(setValuesButton, c);
                 this.setConstrainst(c, 2, labels.length/2 +1 , 1, 1, 0, 0, 1, 1, GridBagConstraints.NONE);
@@ -160,11 +169,18 @@ public class MainWindow {
                 window.getContentPane().add(panel, c);
                 panel.setLayout(new GridBagLayout());
                 this.setConstrainst(c, 1, 1, 1, 1, 0, 0, 1, 1, GridBagConstraints.BOTH);
+
                 svgCanvas.setSize(panel.getSize());
                 svgCanvas.setDocumentState(JSVGComponent.ALWAYS_DYNAMIC);
+
                 System.out.println(panel.getSize());
                 panel.add(svgCanvas, c);
+
                 window.setVisible(true);
+
+
+
+
             }
 
             public Runnable init(MainWindow mm)
@@ -199,14 +215,15 @@ public class MainWindow {
         GraphEvolutionGenerator generator = new GraphEvolutionGenerator(ourGraph,arguments, map.get("Population Size").intValue(), map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), 2, 1);
         while(true)
         {
-            long timeLimit = map.get("Time Limit").longValue();
+
             long begin = System.currentTimeMillis();
-            while(System.currentTimeMillis() - begin < timeLimit)
+            while(System.currentTimeMillis() - begin < 100)
             {
                 generator.generateNextPopulation();
             }
             org.javatuples.Pair<PSZTGraph, Double> bestGraph = generator.getBestGraphFromCurrentPopulation();
-            bestGraph.getValue0();
+//            PSZTGraph graphTest = generator.
+            System.out.println("yolo:"+bestGraph.getValue1());
             PSZTGraphToSVGConverter converter = new PSZTGraphToSVGConverter(bestGraph.getValue0(), map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), map.get("Radius"));
             converter.doTheMagic();
             Document doc = converter.getSvgDraw().getDoc();

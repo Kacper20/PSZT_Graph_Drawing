@@ -19,14 +19,12 @@ public class GraphQualityEvaluator {
 
     public double qualityOfGraph(PSZTGraph graph) {
 
-        double initialQuality = 0;
-
-        initialQuality -= numberOfCrossings(graph) * arguments.getCrossingPunishment();
 
 
         double crossingCumulativePunishment = arguments.getCrossingPunishment() * ( 1 / (numberOfCrossings(graph) + 1));
         double lengthCumulativePunishment = arguments.getLengthPunishment() * (1 / (relativeErrorOfEdgeLengths(graph) + 1));
         double anglesCumulativePunishment = arguments.getVertexAnglesPunishment() * (1 / (edgeAnglesDeviation(graph) + 1));
+
 
 
 
@@ -56,7 +54,7 @@ public class GraphQualityEvaluator {
 
                     double angle = angleBetween2Lines(firstLine, secondLine);
                     double val = 2 * Math.PI / (double)edges.size();
-                    value += angle - val;
+                    value += Math.pow(angle - val, 2);
                 }
             }
         }
@@ -119,7 +117,7 @@ public class GraphQualityEvaluator {
         int length = edges.size();
         int numberOfCrossingEdges = 0;
         for (int i = 0; i < length; i++) {
-            for (int j = i + 1; j < length; i++) {
+            for (int j = i + 1; j < length; j++) {
 
                 PSZTEdge firstEdge = edges.get(i);
                 PSZTEdge secondEdge = edges.get(j);
