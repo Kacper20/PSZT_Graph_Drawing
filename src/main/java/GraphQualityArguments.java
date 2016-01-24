@@ -3,11 +3,11 @@
  */
 public class GraphQualityArguments {
 
-    private double distancePunishment;
-    private double lengthPunishment;
-    private double crossingPunishment;
-    private double vertexCrossingPunishment;
-    private double vertexAnglesPunishment;
+    private double distancePunishment = 0.5;
+    private double lengthPunishment = 0.8;
+    private double crossingPunishment = 0.02;
+    private double vertexCrossingPunishment = 0.01;
+    private double vertexAnglesPunishment = 0.18;
 
     private double  preferredVertexRadius;
     private double preferredLength;

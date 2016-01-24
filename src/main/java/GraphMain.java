@@ -35,15 +35,8 @@ public class GraphMain {
 
             PSZTGraph firstPop = generator.getPopulation().get(1);
 
-//            Graph graph = PSZTGraph.GraphFromPSZTGraph(firstPop);
             PSZTGraphToSVGConverter converter = new PSZTGraphToSVGConverter(firstPop, 800, 600, 12.0);
 
-//            GraphToSVGConverter graphToSVGConverter = new GraphToSVGConverter(graph, 800, 600, 30.);
-
-//randomowy comment ^^.
-            //drugi randomowy comment ^_^
-            //i trzeci komencik < 3
-            //xDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDxDXdDxDXDXDxDXDxDXDxDxDxDxDxDxDxDxDxDxD
             converter.doTheMagic();
             converter.getSvgDraw().show();
 
