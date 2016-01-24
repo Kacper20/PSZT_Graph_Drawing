@@ -2,6 +2,7 @@ import org.apache.batik.swing.JSVGCanvas;
 import org.apache.batik.swing.gvt.Interactor;
 import org.apache.batik.swing.svg.JSVGComponent;
 import org.apache.commons.math3.util.Pair;
+import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.w3c.dom.Document;
 
@@ -23,7 +24,7 @@ public class MainWindow {
     private JFrame window;
     private JButton setValuesButton;
     private JButton clearButton;
-
+    private JButton stopAlgorithm;
     private JLabel[] labels;
     private JTextField[] params;
 
@@ -32,7 +33,7 @@ public class MainWindow {
     private JLabel fitness;
     private JLabel population;
     private PSZTGraph ourGraph;
-
+    private boolean stopped;
     public void setPsztGraph(PSZTGraph psztGraph) {
         this.ourGraph = psztGraph;
     }
@@ -60,7 +61,7 @@ public class MainWindow {
             MainWindow m;
             public void run()
             {
-
+                stopped = false;
                 window = new JFrame("PSZT_Algorytm_Ewolucyjny");
                 window.setSize(800, 800);
                 window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -69,9 +70,32 @@ public class MainWindow {
                 svgCanvas = new JSVGCanvas();
                 setValuesButton = new JButton("Set Values");
                 clearButton = new JButton("Clear");
+                stopAlgorithm = new JButton("Stop");
                 setValuesButton.addActionListener((new ActionListener()
                 {
+                    class PSZTWorker extends SwingWorker<Void, Void>
+                    {
+                        HashMap h;
+                        MainWindow m;
+                        PSZTWorker(MainWindow m, HashMap h) {
+                        this.m = m;
+                        this.h = h;
+                        }
+
+                        @Override
+                        protected Void doInBackground()
+                        {
+
+                            m.startGraphsGeneration(h);
+
+
+                            return null;
+                        }
+
+                    };
                     MainWindow m;
+                    private PSZTWorker worker;
+                    private boolean isRunning;
                     public void actionPerformed(ActionEvent e)
                     {
                         HashMap<String, Double> values = new HashMap<String, Double>();
@@ -83,32 +107,25 @@ public class MainWindow {
                                 values.put(getLabelStrings()[i], defaultValues[i]);
 
                         }
-
-                        SwingWorker worker = new SwingWorker<Void, Void>()
+                        if(!isRunning)
                         {
-                            public SwingWorker init(MainWindow m, HashMap h) {
-                                this.m = m;
-                                this.h = h;
-                                return this;
-                            }
-                            HashMap h;
-                            MainWindow m;
-                            @Override
-                            protected Void doInBackground()
-                            {
-                                m.startGraphsGeneration(h);
-                                return null;
-                            }
-
-                        }.init(m, values);
+                            worker = new PSZTWorker(m, values);
+                            isRunning = true;
+                        }
+                        else
+                        {
+                            worker.cancel(true);
+                            worker = new PSZTWorker(m, values);
+                        }
 
                         worker.execute();
-
 
                     }
                     public ActionListener init(MainWindow mm)
                     {
                         m = mm;
+                        isRunning = false;
+
                         return this;
                     }
                 }).init(m));
@@ -124,9 +141,10 @@ public class MainWindow {
                 clearButton.addActionListener((new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        int i = 0;
                         for(JTextField t : m.getParams())
                         {
-                            t.setText("");
+                            t.setText(Double.toString(defaultValues[i++]));
                         }
                     }
                     public ActionListener init(MainWindow mm)
@@ -135,6 +153,19 @@ public class MainWindow {
                         return this;
                     }
                 }).init(m));
+                stopAlgorithm.addActionListener(new ActionListener() {
+                    MainWindow m;
+                    @Override
+                    public void actionPerformed(ActionEvent e)
+                    {
+                        m.stopAlgorithmExecution();
+                    }
+                    public ActionListener init(MainWindow m)
+                    {
+                        this.m = m;
+                        return this;
+                    }
+                });
                 fitness = new JLabel("Fitness:");
                 population = new JLabel("Population:");
                 panel = new JPanel();
@@ -157,13 +188,15 @@ public class MainWindow {
                     window.getContentPane().add(labels[i], c);
                 }
 
-                this.setConstrainst(c, 1, labels.length/2 + 1, 1, 1, 0, 0, 1, 1, GridBagConstraints.NONE);
+                this.setConstrainst(c, 0, labels.length/2 + 1, 1, 1, 0, 0, 1, 1, GridBagConstraints.NONE);
                 window.getContentPane().add(setValuesButton, c);
-                this.setConstrainst(c, 2, labels.length/2 +1 , 1, 1, 0, 0, 1, 1, GridBagConstraints.NONE);
+                this.setConstrainst(c, 1, labels.length/2 +1 , 1, 1, 0, 0, 1, 1, GridBagConstraints.NONE);
                 window.getContentPane().add(clearButton, c);
-                this.setConstrainst(c, 3, labels.length/2 +1 , 1, 1, 0, 0, 1, 1, GridBagConstraints.NONE);
+                this.setConstrainst(c, 2, labels.length/2 +1 , 1, 1, 0, 0, 1, 1, GridBagConstraints.NONE);
+                window.getContentPane().add(stopAlgorithm, c);
+                this.setConstrainst(c, 3, labels.length/2 +1 , 1, 1, 0, 0, 1, 1, GridBagConstraints.WEST);
                 window.getContentPane().add(fitness, c);
-                this.setConstrainst(c, 5, labels.length/2 +1 , 1, 1, 0, 0, 1, 1, GridBagConstraints.NONE);
+                this.setConstrainst(c, 5, labels.length/2 +1 , 1, 1, 0, 0, 1, 1, GridBagConstraints.WEST);
                 window.getContentPane().add(population, c);
                 this.setConstrainst(c, 0, labels.length/2 +2, 10, 1, 0, 0, 40, 60, GridBagConstraints.BOTH);
                 window.getContentPane().add(panel, c);
@@ -209,7 +242,7 @@ public class MainWindow {
         }.init(this));
     }
 
-    public void startGraphsGeneration(HashMap<String, Double> map) {
+    public synchronized void startGraphsGeneration(HashMap<String, Double> map) {
         GraphQualityArguments arguments = new GraphQualityArguments(map.get("Edge Length"), map.get("Radius"));
 
         GraphEvolutionGenerator generator = new GraphEvolutionGenerator(ourGraph,arguments, map.get("Population Size").intValue(), map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), 2, 1);
@@ -237,4 +270,8 @@ public class MainWindow {
 
     }
 
+    public void stopAlgorithmExecution()
+    {
+
+    }
 }

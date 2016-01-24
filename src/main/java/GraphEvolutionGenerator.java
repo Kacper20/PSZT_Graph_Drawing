@@ -55,8 +55,8 @@ public class GraphEvolutionGenerator {
 
 
 
-            double randomX =  ThreadLocalRandom.current().nextDouble(vertexDiameter/2, canvasWidth - vertexDiameter/2);
-            double randomY = ThreadLocalRandom.current().nextDouble(vertexDiameter/2, canvasHeight - vertexDiameter/2);
+            double randomX =  ThreadLocalRandom.current().nextDouble(vertexDiameter, canvasWidth - vertexDiameter);
+            double randomY = ThreadLocalRandom.current().nextDouble(vertexDiameter, canvasHeight - vertexDiameter);
             v.setX(randomX);
             v.setY(randomY);
         }
@@ -148,6 +148,7 @@ public class GraphEvolutionGenerator {
             PSZTGraph firstGraph = oldPopulation.get(indx1).getValue0();
             PSZTGraph secondGraph = oldPopulation.get(indx2).getValue0();
             PSZTGraph newGraph = crossPopulation(firstGraph, secondGraph, this.varianceCross);
+
             newPopulation.add(newGraph);
         }
 
@@ -175,8 +176,17 @@ public class GraphEvolutionGenerator {
                 if (uniformRealDistribution.sample() <= probability) {
                     NormalDistribution xDistribution = new NormalDistribution(v.getX(), this.variance);
                     NormalDistribution yDistribution = new NormalDistribution(v.getY(), this.variance);
-                    v.setY(yDistribution.sample());
-                    v.setX(xDistribution.sample());
+                    do
+                    {
+                        v.setY(yDistribution.sample());
+                        v.setX(xDistribution.sample());
+
+                    }
+                    while(v.getX() > canvasWidth - vertexDiameter ||
+                            v.getX() < vertexDiameter ||
+                            v.getY() > canvasHeight - vertexDiameter ||
+                            v.getY() < vertexDiameter);
+
 
                 }
             }
@@ -200,9 +210,22 @@ public class GraphEvolutionGenerator {
                 double sumY = firstVertex.getY() + secondVertex.getY();
                 NormalDistribution distributionX = new NormalDistribution(sumX / 2.0, variance);
                 NormalDistribution distributionY = new NormalDistribution(sumY / 2.0, variance);
+                do
+                {
+                    newVertex.setX(distributionX.sample());
+                    newVertex.setY(distributionY.sample());
 
-                newVertex.setX(distributionX.sample());
-                newVertex.setY(distributionY.sample());
+                }
+                while(newVertex.getX() > canvasWidth - vertexDiameter ||
+                        newVertex.getX() < vertexDiameter ||
+                        newVertex.getY() > canvasHeight - vertexDiameter ||
+                        newVertex.getY() < vertexDiameter);
+                if(newVertex.getX() > canvasWidth - vertexDiameter ||
+                        newVertex.getX() < vertexDiameter ||
+                        newVertex.getY() > canvasHeight - vertexDiameter ||
+                        newVertex.getY() < vertexDiameter)
+                    System.out.println("cross " + newVertex.getX() + " " + newVertex.getY());
+
             }
             return newGraph;
         }
