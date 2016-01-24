@@ -37,7 +37,11 @@ public class PSZTVertex implements Cloneable{
     }
 
     @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
+    protected Object clone() {
+
+        Double newX = x != null ? Double.valueOf(x) : null;
+        Double newY = y != null ? Double.valueOf(y) : null;
+
+        return new PSZTVertex(id,newX,newY);
     }
 }

@@ -9,6 +9,7 @@ import org.w3c.dom.Element;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by konrad on 11.01.16.
@@ -28,7 +29,7 @@ public class PSZTGraphToSVGConverter {
         Element svgRoot = svgDraw.getDoc().getDocumentElement();
 
         // Iterate over edges
-        ArrayList<PSZTEdge> edges = graph.getEdges();
+        List<PSZTEdge> edges = graph.getEdges();
         for (PSZTEdge e : edges) {
             PSZTVertex v1 = e.getFrom();
             Double v1x = v1.getX();
@@ -42,7 +43,7 @@ public class PSZTGraphToSVGConverter {
         }
 
         // Iterate over vertices
-        ArrayList<PSZTVertex> vertices = graph.getVertices();
+        List<PSZTVertex> vertices = graph.getVertices();
         for (PSZTVertex v: vertices) {
             Double x = v.getX();
             Double y = v.getY();

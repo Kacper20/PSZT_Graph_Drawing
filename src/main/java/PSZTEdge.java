@@ -54,8 +54,15 @@ public class PSZTEdge implements Cloneable{
     }
 
     @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
+    protected Object clone() {
+
+        PSZTVertex newFrom = (PSZTVertex) from.clone();
+        PSZTVertex newTo = (PSZTVertex)to.clone();
+        //TODO: Fix cloning
+        Double newPointX = pointX != null ? Double.valueOf(pointX) : null;
+        Double newPointY = pointY != null ? Double.valueOf(pointY) : null;
+        return new  PSZTEdge(newFrom, newTo, newPointX, newPointY, ""+id);
+
     }
 
     public void setPointX(Double pointX) {

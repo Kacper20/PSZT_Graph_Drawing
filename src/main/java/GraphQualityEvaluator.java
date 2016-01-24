@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.*;
+import java.util.List;
 
 /**
  * Created by kacper on 30.12.2015.
@@ -19,18 +20,26 @@ public class GraphQualityEvaluator {
 
     public double qualityOfGraph(PSZTGraph graph) {
 
-        double initialQuality = 0;
-
-        initialQuality -= numberOfCrossings(graph) * arguments.getCrossingPunishment();
 
 
-        double crossingCumulativePunishment = arguments.getCrossingPunishment() * ( 1 / (numberOfCrossings(graph) + 1));
-        double lengthCumulativePunishment = arguments.getLengthPunishment() * (1 / (relativeErrorOfEdgeLengths(graph) + 1));
-        double anglesCumulativePunishment = arguments.getVertexAnglesPunishment() * (1 / (edgeAnglesDeviation(graph) + 1));
+        double crossingCumulativePunishment = (Double) arguments.getCrossingPunishment() * ( 1. / (numberOfCrossings(graph) + 1.));
+        double lengthCumulativePunishment = (Double) arguments.getLengthPunishment() * (1. / (relativeErrorOfEdgeLengths(graph) + 1.));
+        double anglesCumulativePunishment = (Double) arguments.getVertexAnglesPunishment() * (1. / (edgeAnglesDeviation(graph) + 1.));
 
 
+        double test = 0.;
+        for (PSZTVertex a : graph.getVertices()) {
+            for (PSZTVertex b : graph.getVertices()) {
+                double xdif = a.getX() - b.getX();
+                double ydif = a.getY() - b.getY();
+                test+= xdif*xdif+ydif*ydif;
+            }
+        }
 
-        return crossingCumulativePunishment + lengthCumulativePunishment + anglesCumulativePunishment;
+        test /=100000;
+        test = 1./test;
+
+        return crossingCumulativePunishment + lengthCumulativePunishment + anglesCumulativePunishment + test;
 
     }
 
@@ -56,7 +65,7 @@ public class GraphQualityEvaluator {
 
                     double angle = angleBetween2Lines(firstLine, secondLine);
                     double val = 2 * Math.PI / (double)edges.size();
-                    value += angle - val;
+                    value += Math.pow(angle - val, 2);
                 }
             }
         }
@@ -91,7 +100,7 @@ public class GraphQualityEvaluator {
 
     private double relativeErrorOfEdgeLengths(PSZTGraph graph) {
 
-        ArrayList<PSZTEdge> edges = graph.getEdges();
+        List<PSZTEdge> edges = graph.getEdges();
 
         double numberOfEdges = edges.size();
 
@@ -112,14 +121,14 @@ public class GraphQualityEvaluator {
 
 
     private int numberOfCrossings(PSZTGraph graph) {
+        // TODO bugged! check if have common vertex
 
-
-        ArrayList<PSZTEdge> edges = graph.getEdges();
+        List<PSZTEdge> edges = graph.getEdges();
 
         int length = edges.size();
         int numberOfCrossingEdges = 0;
         for (int i = 0; i < length; i++) {
-            for (int j = i + 1; j < length; i++) {
+            for (int j = i + 1; j < length; j++) {
 
                 PSZTEdge firstEdge = edges.get(i);
                 PSZTEdge secondEdge = edges.get(j);
@@ -144,7 +153,7 @@ public class GraphQualityEvaluator {
                 }
             }
         }
-        return numberOfCrossingEdges;
+        return numberOfCrossingEdges-10;    // hardcoded, because of common point
 
     }
 

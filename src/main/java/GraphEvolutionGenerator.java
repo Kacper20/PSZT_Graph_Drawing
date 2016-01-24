@@ -49,8 +49,9 @@ public class GraphEvolutionGenerator {
 
     private PSZTGraph generateRandomGraph(PSZTGraph graph) {
 
+        PSZTGraph newGraph = (PSZTGraph)graph.clone();
 
-        for (PSZTVertex v : graph.getVertices()) {
+        for (PSZTVertex v : newGraph.getVertices()) {
 
             double randomX =  ThreadLocalRandom.current().nextDouble(0, canvasHeight);
             double randomY = ThreadLocalRandom.current().nextDouble(0, canvasHeight);
@@ -58,11 +59,11 @@ public class GraphEvolutionGenerator {
             v.setY(randomY);
         }
 
-        for (PSZTEdge edge: graph.getEdges()) {
+        for (PSZTEdge edge: newGraph.getEdges()) {
 
 
             double midPointX = (edge.getFrom().getX() + edge.getTo().getX()) / 2.0;
-            double midPointY = (edge.getFrom().getY() + edge.getTo().getY() / 2.0);
+            double midPointY = (edge.getFrom().getY() + edge.getTo().getY()) / 2.0;
 
 
 
@@ -72,7 +73,7 @@ public class GraphEvolutionGenerator {
             edge.setPointX(midPointX);
             edge.setPointY(midPointY);
         }
-        return graph;
+        return newGraph;
 
 
     }
@@ -125,7 +126,7 @@ public class GraphEvolutionGenerator {
         for (Pair<PSZTGraph, Double> pair: oldPopulation) {
             PSZTGraph graph = pair.getValue0();
 
-            if (graph.equals(best.getValue0())) { break; }
+            if (graph == best.getValue0()) { break; }
 
             double probability = pair.getValue1() / sum;
             double sample = distribution.sample();

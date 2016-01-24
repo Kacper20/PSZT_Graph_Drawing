@@ -19,7 +19,7 @@ public class MainWindow {
 
 
     private String[] labelStrings = {"Radius", "Edge Length", "Visibility Field Width", "Visibility Field Height", "Time Limit", "Population Size"};
-    private Double[] defaultValues = {0.0,0.0,0.0,0.0,0.0, 0.0};
+    private Double[] defaultValues = {30.0,100.0,800.0,600.0, 400.0, 5.0};
     private JFrame window;
     private JButton setValuesButton;
     private JButton clearButton;
@@ -135,8 +135,8 @@ public class MainWindow {
                         return this;
                     }
                 }).init(m));
-                fitness = new JLabel("Przystosowanie:");
-                population = new JLabel("Populacja:");
+                fitness = new JLabel("Fitness:");
+                population = new JLabel("Population:");
                 panel = new JPanel();
                 GridBagConstraints c = new GridBagConstraints();
                 // ustawianie komponentow w oknie
@@ -215,14 +215,16 @@ public class MainWindow {
         GraphEvolutionGenerator generator = new GraphEvolutionGenerator(ourGraph,arguments, map.get("Population Size").intValue(), map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), 2, 1);
         while(true)
         {
-
+            long timeLimit = map.get("Time Limit").longValue();
             long begin = System.currentTimeMillis();
-            while(System.currentTimeMillis() - begin < 1000)
+            while(System.currentTimeMillis() - begin < timeLimit)
             {
                 generator.generateNextPopulation();
             }
             org.javatuples.Pair<PSZTGraph, Double> bestGraph = generator.getBestGraphFromCurrentPopulation();
-            bestGraph.getValue0();
+//            PSZTGraph graphTest = generator.
+            System.out.println("yolo:"+bestGraph.getValue1());
+            fitness.setText("Fitness: " + bestGraph.getValue1());
             PSZTGraphToSVGConverter converter = new PSZTGraphToSVGConverter(bestGraph.getValue0(), map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), map.get("Radius"));
             converter.doTheMagic();
             Document doc = converter.getSvgDraw().getDoc();
