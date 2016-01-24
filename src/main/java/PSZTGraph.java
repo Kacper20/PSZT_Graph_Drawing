@@ -16,26 +16,26 @@ import java.util.stream.Collectors;
 
 public class PSZTGraph implements Cloneable {
 
-    private ArrayList<PSZTVertex> vertices;
-    private ArrayList<PSZTEdge> edges;
+    private List<PSZTVertex> vertices;
+    private List<PSZTEdge> edges;
 
-    public ArrayList<PSZTVertex> getVertices() {
+    public List<PSZTVertex> getVertices() {
         return vertices;
     }
 
-    public void setVertices(ArrayList<PSZTVertex> vertices) {
+    public void setVertices(List<PSZTVertex> vertices) {
         this.vertices = vertices;
     }
 
-    public ArrayList<PSZTEdge> getEdges() {
+    public List<PSZTEdge> getEdges() {
         return edges;
     }
 
-    public void setEdges(ArrayList<PSZTEdge> edges) {
+    public void setEdges(List<PSZTEdge> edges) {
         this.edges = edges;
     }
 
-    public PSZTGraph(ArrayList<PSZTVertex> vertices, ArrayList<PSZTEdge> edges) {
+    public PSZTGraph(List<PSZTVertex> vertices, List<PSZTEdge> edges) {
         this.vertices = vertices;
         this.edges = edges;
     }
@@ -48,18 +48,22 @@ public class PSZTGraph implements Cloneable {
     }
     @Override
     protected Object clone() {
+        List<PSZTVertex> newVertices = new ArrayList<>();
+        for (PSZTVertex v: this.vertices) newVertices.add((PSZTVertex) v.clone());
+
+        List<PSZTEdge> newEdges = new ArrayList<>();
+        for (PSZTEdge e: this.edges) newEdges.add((PSZTEdge) e.clone());
 
 
-
-        return new PSZTGraph((ArrayList<PSZTVertex>)this.vertices.clone(), (ArrayList<PSZTEdge>) this.edges.clone());
+        return new PSZTGraph(newVertices, newEdges);
 
 
     }
 //TODO: read x and y values too.
     public PSZTGraph(Graph graph) {
 
-        ArrayList<PSZTEdge> psztEdges = new ArrayList<>();
-        ArrayList<PSZTVertex> psztVertexes = new ArrayList<>();
+        List<PSZTEdge> psztEdges = new ArrayList<>();
+        List<PSZTVertex> psztVertexes = new ArrayList<>();
 
         Iterator<Vertex> vertexIterator = graph.vertices();
 
@@ -111,7 +115,7 @@ public class PSZTGraph implements Cloneable {
         this.edges = psztEdges;
 
     }
-    public static PSZTVertex vertexOfId(ArrayList<PSZTVertex> list, String id) {
+    public static PSZTVertex vertexOfId(List<PSZTVertex> list, String id) {
         for (PSZTVertex vertex : list) {
             if(vertex.getId().equals(id)) { return vertex; }
         }

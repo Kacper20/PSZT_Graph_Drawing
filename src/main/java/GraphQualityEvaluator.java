@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.*;
+import java.util.List;
 
 /**
  * Created by kacper on 30.12.2015.
@@ -89,7 +90,7 @@ public class GraphQualityEvaluator {
 
     private double relativeErrorOfEdgeLengths(PSZTGraph graph) {
 
-        ArrayList<PSZTEdge> edges = graph.getEdges();
+        List<PSZTEdge> edges = graph.getEdges();
 
         double numberOfEdges = edges.size();
 
@@ -112,7 +113,7 @@ public class GraphQualityEvaluator {
     private int numberOfCrossings(PSZTGraph graph) {
 
 
-        ArrayList<PSZTEdge> edges = graph.getEdges();
+        List<PSZTEdge> edges = graph.getEdges();
 
         int length = edges.size();
         int numberOfCrossingEdges = 0;
