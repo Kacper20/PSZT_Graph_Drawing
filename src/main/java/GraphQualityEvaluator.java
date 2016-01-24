@@ -26,7 +26,11 @@ public class GraphQualityEvaluator {
         double lengthCumulativePunishment = (Double) arguments.getLengthPunishment() * (1. / (relativeErrorOfEdgeLengths(graph) + 1.));
         double anglesCumulativePunishment = (Double) arguments.getVertexAnglesPunishment() * (1. / (edgeAnglesDeviation(graph) + 1.));
 
-        return crossingCumulativePunishment + lengthCumulativePunishment + anglesCumulativePunishment;// + test;
+
+
+        return crossingCumulativePunishment + lengthCumulativePunishment + anglesCumulativePunishment;
+
+
 
     }
 
@@ -120,6 +124,7 @@ public class GraphQualityEvaluator {
                 PSZTEdge firstEdge = edges.get(i);
                 PSZTEdge secondEdge = edges.get(j);
 
+                //First edge
                 double firstEdgeFirstX = firstEdge.getFrom().getX();
                 double firstEdgeFirstY = firstEdge.getFrom().getY();
                 double firstEdgeSecondX = firstEdge.getTo().getX();
@@ -127,10 +132,20 @@ public class GraphQualityEvaluator {
 
                 Line2D.Double firstLine = new Line2D.Double(firstEdgeFirstX, firstEdgeFirstY, firstEdgeSecondX, firstEdgeSecondY);
 
+                //Second edge
                 double secondEdgeFirstX = secondEdge.getFrom().getX();
                 double secondEdgeFirstY = secondEdge.getFrom().getY();
                 double secondEdgeSecondX = secondEdge.getTo().getX();
                 double secondEdgeSecondY = secondEdge.getTo().getY();
+
+                //Check if two edges have the same indicent vertex. If yes - continue, we don't want to sum them
+                //To do this
+
+
+                if ((firstEdgeFirstX == secondEdgeSecondX && firstEdgeFirstY == secondEdgeSecondY)
+                        || (firstEdgeSecondX == secondEdgeFirstX && firstEdgeSecondY == secondEdgeFirstY)) {
+                    continue;
+                }
 
                 Line2D.Double secondLine = new Line2D.Double(secondEdgeFirstX, secondEdgeFirstY, secondEdgeSecondX, secondEdgeSecondY);
 
@@ -140,7 +155,7 @@ public class GraphQualityEvaluator {
                 }
             }
         }
-        return numberOfCrossingEdges;
+        return numberOfCrossingEdges;    // hardcoded, because of common point
 
     }
 

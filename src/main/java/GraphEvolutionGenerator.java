@@ -53,8 +53,10 @@ public class GraphEvolutionGenerator {
 
         for (PSZTVertex v : newGraph.getVertices()) {
 
-            double randomX =  ThreadLocalRandom.current().nextDouble(0, canvasHeight);
-            double randomY = ThreadLocalRandom.current().nextDouble(0, canvasHeight);
+
+
+            double randomX =  ThreadLocalRandom.current().nextDouble(vertexDiameter/2, canvasWidth - vertexDiameter/2);
+            double randomY = ThreadLocalRandom.current().nextDouble(vertexDiameter/2, canvasHeight - vertexDiameter/2);
             v.setX(randomX);
             v.setY(randomY);
         }
