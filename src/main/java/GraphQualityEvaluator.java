@@ -26,20 +26,7 @@ public class GraphQualityEvaluator {
         double lengthCumulativePunishment = (Double) arguments.getLengthPunishment() * (1. / (relativeErrorOfEdgeLengths(graph) + 1.));
         double anglesCumulativePunishment = (Double) arguments.getVertexAnglesPunishment() * (1. / (edgeAnglesDeviation(graph) + 1.));
 
-
-        double test = 0.;
-        for (PSZTVertex a : graph.getVertices()) {
-            for (PSZTVertex b : graph.getVertices()) {
-                double xdif = a.getX() - b.getX();
-                double ydif = a.getY() - b.getY();
-                test+= xdif*xdif+ydif*ydif;
-            }
-        }
-
-        test /=100000;
-        test = 1./test;
-
-        return crossingCumulativePunishment + lengthCumulativePunishment + anglesCumulativePunishment + test;
+        return crossingCumulativePunishment + lengthCumulativePunishment + anglesCumulativePunishment;// + test;
 
     }
 
@@ -153,7 +140,7 @@ public class GraphQualityEvaluator {
                 }
             }
         }
-        return numberOfCrossingEdges-10;    // hardcoded, because of common point
+        return numberOfCrossingEdges;
 
     }
 
