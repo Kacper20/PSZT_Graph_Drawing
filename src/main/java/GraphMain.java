@@ -30,16 +30,12 @@ public class GraphMain {
 
 
 
-            GraphQualityArguments arguments = new GraphQualityArguments();
-
-            GraphEvolutionGenerator generator = new GraphEvolutionGenerator(ourGraph,arguments, 100, 800, 600, 2, 1);
-
-            PSZTGraph firstPop = generator.getPopulation().get(1);
-
-            PSZTGraphToSVGConverter converter = new PSZTGraphToSVGConverter(firstPop, 800, 600, 12.0);
-
-            converter.doTheMagic();
-            converter.getSvgDraw().show();
+//            GraphQualityArguments arguments = new GraphQualityArguments();
+//            GraphEvolutionGenerator generator = new GraphEvolutionGenerator(ourGraph,arguments, 100, 800, 600, 2, 1);
+//            PSZTGraph firstPop = generator.getPopulation().get(1);
+//            PSZTGraphToSVGConverter converter = new PSZTGraphToSVGConverter(firstPop, 800, 600, 12.0);
+//            converter.doTheMagic();
+//            converter.getSvgDraw().show();
 
 
 
