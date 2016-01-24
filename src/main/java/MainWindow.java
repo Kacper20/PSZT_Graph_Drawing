@@ -116,7 +116,7 @@ public class MainWindow {
                 labels = new JLabel[labelStrings.length];
                 for(int i = 0; i < labelStrings.length; i++)
                 {
-                    params[i] = new JTextField("");
+                    params[i] = new JTextField(Double.toString(defaultValues[i]));
                     labels[i] = new JLabel(labelStrings[i]);
 
                 }
