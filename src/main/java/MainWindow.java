@@ -19,7 +19,7 @@ public class MainWindow {
 
 
     private String[] labelStrings = {"Radius", "Edge Length", "Visibility Field Width", "Visibility Field Height", "Time Limit", "Population Size"};
-    private Double[] defaultValues = {0.0,0.0,0.0,0.0,0.0, 0.0};
+    private Double[] defaultValues = {30.0,100.0,800.0,600.0, 400.0, 5.0};
     private JFrame window;
     private JButton setValuesButton;
     private JButton clearButton;
@@ -215,9 +215,9 @@ public class MainWindow {
         GraphEvolutionGenerator generator = new GraphEvolutionGenerator(ourGraph,arguments, map.get("Population Size").intValue(), map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), 2, 1);
         while(true)
         {
-
+            long timeLimit = map.get("Time Limit").longValue();
             long begin = System.currentTimeMillis();
-            while(System.currentTimeMillis() - begin < 100)
+            while(System.currentTimeMillis() - begin < timeLimit)
             {
                 generator.generateNextPopulation();
             }
