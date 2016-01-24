@@ -43,7 +43,8 @@ public class PSZTGraph implements Cloneable {
 
     public List<PSZTEdge> incidentToVertex(PSZTVertex vertex) {
 
-        return this.edges.stream().filter(e -> e.getTo().equals(vertex) || e.getFrom().equals(vertex)).collect(Collectors.toList());
+        return this.edges.stream().filter(e -> e.getTo().getId().equals(vertex.getId()) ||
+                e.getFrom().getId().equals(vertex.getId())).collect(Collectors.toList());
 
     }
     @Override

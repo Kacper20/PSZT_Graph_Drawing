@@ -62,8 +62,8 @@ public class GraphEvolutionGenerator {
         for (PSZTEdge edge: newGraph.getEdges()) {
 
 
-            double midPointX = (edge.getFrom().getX() + edge.getTo().getX()) / 2.0);
-            double midPointY = (edge.getFrom().getY() + edge.getTo().getY()) / 2.0);
+            double midPointX = (edge.getFrom().getX() + edge.getTo().getX()) / 2.0;
+            double midPointY = (edge.getFrom().getY() + edge.getTo().getY()) / 2.0;
 
 
 
