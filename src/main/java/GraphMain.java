@@ -26,6 +26,7 @@ public class GraphMain {
 
             PSZTGraph ourGraph = new PSZTGraph(graphToDraw);
 
+            w.setPsztGraph(ourGraph);
 
 
 

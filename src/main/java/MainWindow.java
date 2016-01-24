@@ -1,11 +1,15 @@
 import org.apache.batik.swing.JSVGCanvas;
+import org.apache.batik.swing.gvt.Interactor;
 import org.apache.batik.swing.svg.JSVGComponent;
+import org.apache.commons.math3.util.Pair;
+import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.w3c.dom.Document;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Arc2D;
 import java.util.HashMap;
 
 /**
@@ -14,28 +18,24 @@ import java.util.HashMap;
 public class MainWindow {
 
 
-    private String[] labelStrings = {"Diameter", "Visibility Field Length", "Visibility Field Width", "Time Limit", "Population Size"};
-    private Double[] defaultValues = {0.0,0.0,0.0,0.0,0.0};
+    private String[] labelStrings = {"Radius", "Edge Length", "Visibility Field Width", "Visibility Field Height", "Time Limit", "Population Size"};
+    private Double[] defaultValues = {0.0,0.0,0.0,0.0,0.0, 0.0};
     private JFrame window;
     private JButton setValuesButton;
     private JButton clearButton;
-    private JLabel paramLabel1;
-    private JLabel paramLabel2;
-    private JLabel paramLabel3;
-    private JLabel paramLabel4;
-    private JLabel paramLabel5;
+
     private JLabel[] labels;
     private JTextField[] params;
-    private JTextField param1 ;
-    private JTextField param2 ;
-    private JTextField param3 ;
-    private JTextField param4 ;
-    private JTextField param5 ;
+
     private JPanel panel;
     private JSVGCanvas svgCanvas;
     private JLabel fitness;
     private JLabel population;
+    private PSZTGraph ourGraph;
 
+    public void setPsztGraph(PSZTGraph psztGraph) {
+        this.ourGraph = psztGraph;
+    }
 
     public JTextField[] getParams() {
         return params;
@@ -83,6 +83,27 @@ public class MainWindow {
                                 values.put(getLabelStrings()[i], defaultValues[i]);
 
                         }
+
+                        SwingWorker worker = new SwingWorker<Void, Void>()
+                        {
+                            public SwingWorker init(MainWindow m, HashMap h) {
+                                this.m = m;
+                                this.h = h;
+                                return this;
+                            }
+                            HashMap h;
+                            MainWindow m;
+                            @Override
+                            protected Void doInBackground()
+                            {
+                                m.startGraphsGeneration(h);
+                                return null;
+                            }
+
+                        }.init(m, values);
+
+                        worker.execute();
+
 
                     }
                     public ActionListener init(MainWindow mm)
@@ -188,5 +209,30 @@ public class MainWindow {
         }.init(this));
     }
 
+    public void startGraphsGeneration(HashMap<String, Double> map) {
+        GraphQualityArguments arguments = new GraphQualityArguments(map.get("Edge Length"), map.get("Radius"));
+
+        GraphEvolutionGenerator generator = new GraphEvolutionGenerator(ourGraph,arguments, map.get("Population Size").intValue(), map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), 2, 1);
+        while(true)
+        {
+
+            long begin = System.currentTimeMillis();
+            while(System.currentTimeMillis() - begin < 1000)
+            {
+                generator.generateNextPopulation();
+            }
+            org.javatuples.Pair<PSZTGraph, Double> bestGraph = generator.getBestGraphFromCurrentPopulation();
+            bestGraph.getValue0();
+            PSZTGraphToSVGConverter converter = new PSZTGraphToSVGConverter(bestGraph.getValue0(), map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), map.get("Radius"));
+            converter.doTheMagic();
+            Document doc = converter.getSvgDraw().getDoc();
+            this.getSvgCanvas().setDocument(doc);
+        }
+
+
+//            org.javatuples.Pair<PSZTGraph, Double> bestPair = generator.getBestGraphFromCurrentPopulation();
+//            bestPair.getValue0();
+
+    }
 
 }
