@@ -1,12 +1,11 @@
 
 import org.apache.commons.math3.distribution.NormalDistribution;
+import org.apache.commons.math3.distribution.UniformIntegerDistribution;
+import org.apache.commons.math3.distribution.UniformRealDistribution;
 import org.javatuples.Pair;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 
@@ -23,7 +22,12 @@ public class GraphEvolutionGenerator {
     private int canvasHeight;
     private double vertexDiameter;
     private double variance;
+    private double mutationProbability = 0.1;
+//    private double crossoverProbability = 0.3;
 
+    private double varianceCross =  0.2;
+
+    private int generation = 1;
     private GraphQualityEvaluator evaluator;
     public GraphEvolutionGenerator(PSZTGraph graph, GraphQualityArguments arguments, int populationSize, int canvasWidth, int canvasHeight, double vertexDiameter, double variance){
         this.graph = graph;
@@ -85,55 +89,73 @@ public class GraphEvolutionGenerator {
 
     //Function that takes
 
-    synchronized ArrayList<PSZTGraph> generateNextPopulation() {
 
-        ArrayList<Pair<PSZTGraph, Double>> list = new ArrayList<Pair<PSZTGraph, Double>>();
+    synchronized List<PSZTGraph> generateNextPopulation() {
 
-        for (PSZTGraph g: population) {
-            double quality = evaluator.qualityOfGraph(g);
-            Pair<PSZTGraph, Double> newPair = new Pair<PSZTGraph, Double>(g, quality);
-            list.add(newPair);
-        }
-        list.sort(new Comparator<Pair<PSZTGraph, Double>>() {
+        Comparator<Pair<PSZTGraph, Double>> comparator = new Comparator<Pair<PSZTGraph, Double>>() {
             public int compare(Pair<PSZTGraph, Double> o1, Pair<PSZTGraph, Double> o2) {
                 if (o1.getValue1() > o2.getValue1()) { return 1; }
                 else if (o1.getValue1() < o2.getValue1()) { return -1; }
                 return 0;
             }
-        });
-
-        //Now population is sorted in list.
+        };
 
 
-        double percentOfPopulationToRemove = 0.5;
-        int elementsToRemove = this.populationSize * (int)percentOfPopulationToRemove;
+        List<Pair<PSZTGraph, Double>> oldPopulation = new ArrayList<>();
+        for (PSZTGraph g: population) {
+            double quality = evaluator.qualityOfGraph(g);
+            Pair<PSZTGraph, Double> newPair = new Pair<PSZTGraph, Double>(g, quality);
 
-        ArrayList<PSZTGraph> tempPopulation = new ArrayList<PSZTGraph>();
-        for (int i = elementsToRemove; i < population.size(); i++) {
-            tempPopulation.add(this.population.get(i));
+            oldPopulation.add(newPair);
+        }
+        oldPopulation.sort(comparator);
+        // the best is the last one
+
+        List<PSZTGraph> newPopulation = new ArrayList<>();
+
+        Pair<PSZTGraph, Double> best = oldPopulation.get(oldPopulation.size() - 1);
+
+        UniformRealDistribution distribution = new UniformRealDistribution(0.0, 1.0);
+
+        double sum = -best.getValue1();
+        for (Pair<PSZTGraph, Double> pair: oldPopulation) {
+            sum += pair.getValue1();
+        }
+
+        for (Pair<PSZTGraph, Double> pair: oldPopulation) {
+            PSZTGraph graph = pair.getValue0();
+
+            if (graph.equals(best.getValue0())) { break; }
+
+            double probability = pair.getValue1() / sum;
+            double sample = distribution.sample();
+            if (probability <= sample) {
+                newPopulation.add(graph);
+            }
         }
 
 
-        ArrayList<PSZTGraph> sumOfPopulations = new ArrayList<PSZTGraph>(tempPopulation);
-        for (int i = 0; i < tempPopulation.size(); i++) {
 
-            int indx1 = ThreadLocalRandom.current().nextInt(0, tempPopulation.size());
-            int indx2 = ThreadLocalRandom.current().nextInt(0, tempPopulation.size());
-
-
-            PSZTGraph firstGraph = tempPopulation.get(indx1);
-            PSZTGraph secondGraph = tempPopulation.get(indx2);
-
-            PSZTGraph newGraph = crossPopulation(firstGraph, secondGraph);
-            sumOfPopulations.add(newGraph);
+        //TODO: Zmiana sposobu krzyzowania, wydzielic do metody
+        UniformIntegerDistribution integerDistribution = new UniformIntegerDistribution(0, oldPopulation.size() - 1);
+        while (newPopulation.size() < oldPopulation.size() - 1) {
+            int indx1 = integerDistribution.sample();
+            int indx2 = integerDistribution.sample();
+            while (indx1 == indx2) { indx2 = integerDistribution.sample();  }
+            PSZTGraph firstGraph = oldPopulation.get(indx1).getValue0();
+            PSZTGraph secondGraph = oldPopulation.get(indx2).getValue0();
+            PSZTGraph newGraph = crossPopulation(firstGraph, secondGraph, this.varianceCross);
+            newPopulation.add(newGraph);
         }
 
+        mutatePopulation(newPopulation, mutationProbability);
+
+        newPopulation.add(best.getValue0());
 
 
-        mutatePopulation(sumOfPopulations);
+        this.generation += 1;
 
-
-        return sumOfPopulations;
+        return newPopulation;
     }
 
 
@@ -142,14 +164,18 @@ public class GraphEvolutionGenerator {
     //Mutation is performed by adding independent Gaussian noise to each of vertices.
     //
 
-    private void mutatePopulation(ArrayList<PSZTGraph> population) {
+    private void mutatePopulation(List<PSZTGraph> population, double probability) {
 
+        UniformRealDistribution uniformRealDistribution = new UniformRealDistribution(0.0, 1.0);
         for (PSZTGraph graph : population) {
             for (PSZTVertex v : graph.getVertices()) {
-                NormalDistribution xDistribution = new NormalDistribution(v.getX(), this.variance);
-                NormalDistribution yDistribution = new NormalDistribution(v.getY(), this.variance);
-                v.setX(xDistribution.sample());
-                v.setY(yDistribution.sample());
+                if (uniformRealDistribution.sample() <= probability) {
+                    NormalDistribution xDistribution = new NormalDistribution(v.getX(), this.variance);
+                    NormalDistribution yDistribution = new NormalDistribution(v.getY(), this.variance);
+                    v.setY(yDistribution.sample());
+                    v.setX(xDistribution.sample());
+
+                }
             }
         }
     }
@@ -157,64 +183,25 @@ public class GraphEvolutionGenerator {
 
 
 
-    private PSZTGraph crossPopulation(PSZTGraph graph1, PSZTGraph graph2) {
+    private PSZTGraph crossPopulation(PSZTGraph graph1, PSZTGraph graph2, double variance) {
 
         try {
             PSZTGraph newGraph = (PSZTGraph)graph1.clone();
 
-            int length = graph1.getVertices().size();
-
-            for (int i = 0; i < length; i++) {
-
-
-
-                PSZTVertex next1 = graph1.getVertices().get(i);
-                PSZTVertex next2 = graph2.getVertices().get(i);
+            for (int i=0; i<newGraph.getVertices().size(); i++) {
+                PSZTVertex firstVertex = graph1.getVertices().get(i);
+                PSZTVertex secondVertex = graph2.getVertices().get(i);
 
                 PSZTVertex newVertex = newGraph.getVertices().get(i);
+                double sumX = firstVertex.getX() + secondVertex.getX();
+                double sumY = firstVertex.getY() + secondVertex.getY();
+                NormalDistribution distributionX = new NormalDistribution(sumX / 2.0, variance);
+                NormalDistribution distributionY = new NormalDistribution(sumY / 2.0, variance);
 
-
-                if (ThreadLocalRandom.current().nextBoolean()) {
-                    newVertex.setX(next1.getX());
-                }
-                else {
-                    newVertex.setX(next2.getX());
-                }
-                if (ThreadLocalRandom.current().nextBoolean()) {
-                    newVertex.setY(next1.getY());
-
-                }
-                else {
-                    newVertex.setY(next2.getY());
-                }
+                newVertex.setX(distributionX.sample());
+                newVertex.setY(distributionY.sample());
             }
-
-            int edgesCount = graph2.getEdges().size();
-            for (int i = 0; i < edgesCount; i++) {
-
-
-                PSZTEdge edge1 = graph1.getEdges().get(i);
-                PSZTEdge edge2 = graph2.getEdges().get(i);
-                PSZTEdge newEdge = newGraph.getEdges().get(i);
-
-
-                if (ThreadLocalRandom.current().nextBoolean()) {
-                    newEdge.setPointX(edge1.getPointX());
-                }
-                else {
-                    newEdge.setPointX(edge2.getPointX());
-                }
-                if (ThreadLocalRandom.current().nextBoolean()) {
-                    newEdge.setPointY(edge1.getPointY());
-
-                }
-                else {
-                    newEdge.setPointY(edge2.getPointY());
-                }
-
-            }
-
-            return graph1;
+            return newGraph;
         }
         catch (Exception e) {
             System.out.println("Exception" + e.toString());
