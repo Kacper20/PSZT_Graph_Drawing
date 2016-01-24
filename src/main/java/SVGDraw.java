@@ -113,4 +113,15 @@ public class SVGDraw {
         return line;
     }
 
+    public Element textCentered(double x, double y, double size, String t) {
+        Element text = doc.createElementNS(svgNS, "text");
+        text.setAttributeNS(null, "x", q(x));
+        text.setAttributeNS(null, "y", q(y+size/3.));
+        text.setAttributeNS(null, "style",
+                "text-anchor: middle; fill:black; stroke:none; font-size: "+size+"px");
+        Text message = doc.createTextNode(t);
+        text.appendChild(message);
+        return text;
+    }
+
 }

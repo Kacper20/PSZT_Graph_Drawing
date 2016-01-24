@@ -48,6 +48,7 @@ public class PSZTGraphToSVGConverter {
             Double x = v.getX();
             Double y = v.getY();
             svgRoot.appendChild(svgDraw.circle(x, y, radius));
+            svgRoot.appendChild(svgDraw.textCentered(x, y, radius/2, v.getId()));
         }
     }
 
