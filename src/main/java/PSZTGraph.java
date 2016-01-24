@@ -5,9 +5,7 @@ import org.apache.tinkerpop.gremlin.structure.T;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -49,16 +47,26 @@ public class PSZTGraph implements Cloneable {
     }
     @Override
     protected Object clone() {
+        Map<PSZTVertex, PSZTVertex> oldToNew = new HashMap<>();
+
         List<PSZTVertex> newVertices = new ArrayList<>();
-        for (PSZTVertex v: this.vertices) newVertices.add((PSZTVertex) v.clone());
+        for (PSZTVertex v: this.vertices) {
+            PSZTVertex clonedV = (PSZTVertex) v.clone();
+            oldToNew.put(v, clonedV);
+            newVertices.add(clonedV);
+        }
 
         List<PSZTEdge> newEdges = new ArrayList<>();
-        for (PSZTEdge e: this.edges) newEdges.add((PSZTEdge) e.clone());
-
+        for (PSZTEdge e: this.edges) {
+            PSZTEdge clonedE = (PSZTEdge) e.clone();
+            PSZTVertex correctFrom = oldToNew.get(e.getFrom());
+            PSZTVertex correctTo = oldToNew.get(e.getTo());
+            clonedE.setFrom(correctFrom);
+            clonedE.setTo(correctTo);
+            newEdges.add(clonedE);
+        }
 
         return new PSZTGraph(newVertices, newEdges);
-
-
     }
 //TODO: read x and y values too.
     public PSZTGraph(Graph graph) {
@@ -73,28 +81,24 @@ public class PSZTGraph implements Cloneable {
             Vertex v = vertexIterator.next();
             String id = String.valueOf(v.id());
 
-
             Double x = null;
             Double y = null;
             if (v.property("x").isPresent()) {
                 x = (double)v.property("x").value();
             }
-            if (v.property("x").isPresent()) {
+            if (v.property("y").isPresent()) {
                 y = (double)v.property("y").value();
             }
             PSZTVertex vertex = new PSZTVertex(id, x, y);
             psztVertexes.add(vertex);
         }
 
-
-
         Iterator<Edge> edgeIterator = graph.edges();
         while (edgeIterator.hasNext()) {
-
             Edge e = edgeIterator.next();
+
             Vertex in = e.inVertex();
             String inVertexId = in.id().toString();
-
             PSZTVertex vIn = vertexOfId(psztVertexes, inVertexId);
             assert(vIn != null);
 
@@ -108,21 +112,18 @@ public class PSZTGraph implements Cloneable {
 
             PSZTEdge psztEdge = new PSZTEdge(vIn, vOut, null, null,edgeId);
             psztEdges.add(psztEdge);
-            Vertex v  = e.inVertex();
-
         }
 
         this.vertices = psztVertexes;
         this.edges = psztEdges;
-
     }
+
     public static PSZTVertex vertexOfId(List<PSZTVertex> list, String id) {
         for (PSZTVertex vertex : list) {
             if(vertex.getId().equals(id)) { return vertex; }
         }
         return null;
     }
-
 
     public static Graph GraphFromPSZTGraph(PSZTGraph psztGraph) {
 
@@ -159,8 +160,6 @@ public class PSZTGraph implements Cloneable {
             }
         }
         return null;
-
-
     }
 
 }
