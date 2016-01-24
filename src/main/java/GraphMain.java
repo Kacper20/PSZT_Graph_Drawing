@@ -55,10 +55,10 @@ public class GraphMain {
 
 
 
-
-            Graph converted = PSZTGraph.GraphFromPSZTGraph(ourGraph);
-            converted.io(IoCore.graphml()).writeGraph("converted.xml");
-            System.out.println(ourGraph.getVertices().size());
+//
+//            Graph converted = PSZTGraph.GraphFromPSZTGraph(ourGraph);
+//            converted.io(IoCore.graphml()).writeGraph("converted.xml");
+//            System.out.println(ourGraph.getVertices().size());
 
 
 

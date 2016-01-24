@@ -217,12 +217,13 @@ public class MainWindow {
         {
 
             long begin = System.currentTimeMillis();
-            while(System.currentTimeMillis() - begin < 1000)
+            while(System.currentTimeMillis() - begin < 100)
             {
                 generator.generateNextPopulation();
             }
             org.javatuples.Pair<PSZTGraph, Double> bestGraph = generator.getBestGraphFromCurrentPopulation();
-            bestGraph.getValue0();
+//            PSZTGraph graphTest = generator.
+            System.out.println("yolo:"+bestGraph.getValue1());
             PSZTGraphToSVGConverter converter = new PSZTGraphToSVGConverter(bestGraph.getValue0(), map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), map.get("Radius"));
             converter.doTheMagic();
             Document doc = converter.getSvgDraw().getDoc();
