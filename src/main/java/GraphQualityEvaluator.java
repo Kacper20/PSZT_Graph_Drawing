@@ -1,9 +1,5 @@
-import org.apache.tinkerpop.gremlin.structure.Graph;
-
-import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
-import java.util.*;
 import java.util.List;
 
 /**
@@ -15,11 +11,15 @@ public class GraphQualityEvaluator {
 
     public GraphQualityEvaluator(GraphQualityArguments arguments) {
         this.arguments = arguments;
-
     }
 
     public double qualityOfGraph(PSZTGraph graph) {
-        double crossingCumulativePunishment = (Double) arguments.getCrossingPunishment() * ( 1. / (numberOfCrossings(graph) + numberOfVerticesWithVerticesCrossings(graph) + 1.));
+        double crossingCumulativePunishment =
+                arguments.getCrossingPunishment() *
+                        ( 1. / (numberOfCrossings(graph) +
+                                numberOfVerticesWithVerticesCrossings(graph) +
+                                numberOfVerticesWithEdgesCrossings(graph) +
+                                1.));
         double lengthCumulativePunishment = (Double) arguments.getLengthPunishment() * (1. / (relativeErrorOfEdgeLengths(graph) + 1.));
         double anglesCumulativePunishment = (Double) arguments.getVertexAnglesPunishment() * (1. / (edgeAnglesDeviation(graph) + 1.));
 
@@ -49,36 +49,16 @@ public class GraphQualityEvaluator {
         return value;
     }
 
-    private int numberOfVerticesWithEdgesCrossings(PSZTGraph graph) {
+    public int numberOfVerticesWithEdgesCrossings(PSZTGraph graph) {
         int sum = 0;
         for(PSZTVertex vertex: graph.getVertices()) {
-
             for(PSZTEdge edge: graph.getEdges()) {
-
                 //If edge is indicent to the vertex, let's continue
                 if (edge.getTo() == vertex || edge.getFrom() == vertex) { continue; }
-
-
-
-                //From and to are representing points of begin and end of the edge
-                Point2D from = new Point2D.Double(edge.getFrom().getX(), edge.getFrom().getY());
-                Point2D to = new Point2D.Double(edge.getTo().getX(), edge.getTo().getY());
-
-
-                //Middle vertex point
-                Point2D middleOfVertex = new Point2D.Double(vertex.getX(), vertex.getY());
-
-
-
-
-                //Distance between edge line and middle of the vertex
-                Line2D.Double line = new Line2D.Double(from, to);
-
-                double distance = line.ptLineDist(middleOfVertex);
-
+                double distance = vertexToEdgeDistance(vertex, edge);
 
                 //We're making sure, that we have some space between line and vertex circle
-                double distancePlusThreshold = arguments.getPreferredVertexRadius() + arguments.getPreferredLength() * 0.05;
+                double distancePlusThreshold = arguments.getPreferredVertexRadius();// + arguments.getPreferredLength() * 0.05;
 
                 if ( distance <= distancePlusThreshold) { sum += 1; }
             }
@@ -87,10 +67,11 @@ public class GraphQualityEvaluator {
         return sum;
     }
 
-    private int numberOfVerticesWithVerticesCrossings(PSZTGraph graph) {
+    public int numberOfVerticesWithVerticesCrossings(PSZTGraph graph) {
         int sum = 0;
         for (PSZTVertex v1 : graph.getVertices()) {
             for (PSZTVertex v2 : graph.getVertices()) {
+                if (v1 == v2) continue;
                 if (vertexToVertexDistance(v1,v2) < 2.*arguments.getPreferredVertexRadius()) sum++;
             }
         }
@@ -113,7 +94,7 @@ public class GraphQualityEvaluator {
         return sum;
     }
 
-    private int numberOfCrossings(PSZTGraph graph) {
+    public int numberOfCrossings(PSZTGraph graph) {
         List<PSZTEdge> edges = graph.getEdges();
 
         int length = edges.size();
@@ -139,7 +120,7 @@ public class GraphQualityEvaluator {
         return numberOfCrossingEdges;
     }
 
-    private  static double angleBetween2Lines(Line2D line1, Line2D line2)
+    private static double angleBetween2Lines(Line2D line1, Line2D line2)
     {
         double angle1 = Math.atan2(line1.getY1() - line1.getY2(),
                 line1.getX1() - line1.getX2());
@@ -151,10 +132,49 @@ public class GraphQualityEvaluator {
 
 
 
-    private double vertexToVertexDistance(PSZTVertex v1, PSZTVertex v2) {
+    private static double vertexToVertexDistance(PSZTVertex v1, PSZTVertex v2) {
+        return Math.sqrt(vertexToVertexDistanceSquared(v1,v2));
+    }
+
+    private static double vertexToEdgeDistance(PSZTVertex p, PSZTEdge e) {
+        PSZTVertex v = e.getFrom();
+        PSZTVertex w = e.getTo();
+
+        if (v==w) return vertexToVertexDistance(p, v);  // loop edge, maybe not necessary
+
+        // Consider the line extending the segment, parameterized as v + t (w - v).
+        // We find projection of point p onto the line.
+        // It falls where t = [(p-v) . (w-v)] / |w-v|^2
+        double t = dotProduct(v, p, v, w) / vertexToVertexDistanceSquared(v, w);
+        if (t < 0.0) return vertexToVertexDistance(p, v);       // Beyond the 'v' end of the segment
+        else if (t > 1.0) return vertexToVertexDistance(p, w);  // Beyond the 'w' end of the segment
+        // else use library method:
+
+        //From and to are representing points of begin and end of the edge
+        Point2D from = new Point2D.Double(v.getX(), v.getY());
+        Point2D to = new Point2D.Double(w.getX(), w.getY());
+        //Middle vertex point
+        Point2D middleOfVertex = new Point2D.Double(p.getX(), p.getY());
+        //Distance between edge line and middle of the vertex
+        Line2D.Double line = new Line2D.Double(from, to);
+        return line.ptLineDist(middleOfVertex);
+    }
+
+    private static double dotProduct(PSZTVertex a, PSZTVertex b, PSZTVertex c, PSZTVertex d) {
+        // v1 = b-a
+        // v2 = d-c
+        // returns v1 . v2
+        double v1x = b.getX() - a.getX();
+        double v1y = b.getY() - a.getY();
+        double v2x = d.getX() - c.getX();
+        double v2y = d.getY() - c.getY();
+        return v1x*v2x + v1y*v2y;
+    }
+
+    private static double vertexToVertexDistanceSquared(PSZTVertex v1, PSZTVertex v2){
         double dx = v1.getX() - v2.getX();
         double dy = v1.getY() - v2.getY();
-        return Math.sqrt(dx*dx+dy*dy);
+        return dx*dx+dy*dy;
     }
 
 }

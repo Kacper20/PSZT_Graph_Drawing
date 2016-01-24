@@ -222,8 +222,13 @@ public class MainWindow {
                 generator.generateNextPopulation();
             }
             org.javatuples.Pair<PSZTGraph, Double> bestGraph = generator.getBestGraphFromCurrentPopulation();
-//            PSZTGraph graphTest = generator.
             System.out.println("yolo:"+bestGraph.getValue1());
+
+            GraphQualityEvaluator evaluator = generator.getEvaluator();
+            System.out.println("Crossings EE: " + evaluator.numberOfCrossings(bestGraph.getValue0()));
+            System.out.println("Crossings EV: " + evaluator.numberOfVerticesWithEdgesCrossings(bestGraph.getValue0()));
+            System.out.println("Crossings VV: " + evaluator.numberOfVerticesWithVerticesCrossings(bestGraph.getValue0()));
+
             fitness.setText("Fitness: " + bestGraph.getValue1());
             PSZTGraphToSVGConverter converter = new PSZTGraphToSVGConverter(bestGraph.getValue0(), map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), map.get("Radius"));
             converter.doTheMagic();

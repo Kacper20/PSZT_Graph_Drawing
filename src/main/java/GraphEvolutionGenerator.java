@@ -43,6 +43,10 @@ public class GraphEvolutionGenerator {
 
     }
 
+    public GraphQualityEvaluator getEvaluator() {
+        return evaluator;
+    }
+
     public ArrayList<PSZTGraph> getPopulation() {
         return population;
     }
@@ -154,7 +158,6 @@ public class GraphEvolutionGenerator {
         mutatePopulation(newPopulation, mutationProbability);
 
         newPopulation.add(best.getValue0());
-
 
         this.generation += 1;
 
