@@ -55,15 +55,30 @@ public class GraphQualityEvaluator {
 
             for(PSZTEdge edge: graph.getEdges()) {
 
+                //If edge is indicent to the vertex, let's continue
+                if (edge.getTo() == vertex || edge.getFrom() == vertex) { continue; }
 
+
+
+                //From and to are representing points of begin and end of the edge
                 Point2D from = new Point2D.Double(edge.getFrom().getX(), edge.getFrom().getY());
                 Point2D to = new Point2D.Double(edge.getTo().getX(), edge.getTo().getY());
 
+
+                //Middle vertex point
                 Point2D middleOfVertex = new Point2D.Double(vertex.getX(), vertex.getY());
 
 
-                double distance = pointToLineDistance(middleOfVertex, from, to);
-                double distancePlusThreshold = arguments.getPreferredVertexRadius() * arguments.getPreferredLength() * 0.05;
+
+
+                //Distance between edge line and middle of the vertex
+                Line2D.Double line = new Line2D.Double(from, to);
+
+                double distance = line.ptLineDist(middleOfVertex);
+
+
+                //We're making sure, that we have some space between line and vertex circle
+                double distancePlusThreshold = arguments.getPreferredVertexRadius() + arguments.getPreferredLength() * 0.05;
 
                 if ( distance <= distancePlusThreshold) { sum += 1; }
             }
@@ -134,10 +149,7 @@ public class GraphQualityEvaluator {
     }
 
 
-    public double pointToLineDistance(Point2D A, Point2D B, Point2D P) {
-        double normalLength = Math.sqrt((B.getX()-A.getX())*(B.getX()-A.getX())+(B.getY()-A.getY())*(B.getY()-A.getY()));
-        return Math.abs((P.getX()-A.getX())*(B.getY()-A.getY())-(P.getY()-A.getY())*(B.getX()-A.getX()))/normalLength;
-    }
+
 
     private double vertexToVertexDistance(PSZTVertex v1, PSZTVertex v2) {
         double dx = v1.getX() - v2.getX();
