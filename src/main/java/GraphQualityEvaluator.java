@@ -19,32 +19,17 @@ public class GraphQualityEvaluator {
     }
 
     public double qualityOfGraph(PSZTGraph graph) {
-
-
-
-        double crossingCumulativePunishment = (Double) arguments.getCrossingPunishment() * ( 1. / (numberOfCrossings(graph) + 1.));
+        double crossingCumulativePunishment = (Double) arguments.getCrossingPunishment() * ( 1. / (numberOfCrossings(graph) + numberOfVerticesWithVerticesCrossings(graph) + 1.));
         double lengthCumulativePunishment = (Double) arguments.getLengthPunishment() * (1. / (relativeErrorOfEdgeLengths(graph) + 1.));
         double anglesCumulativePunishment = (Double) arguments.getVertexAnglesPunishment() * (1. / (edgeAnglesDeviation(graph) + 1.));
 
-
-
         return crossingCumulativePunishment + lengthCumulativePunishment + anglesCumulativePunishment;
-
-
-
     }
 
-
-
-
-
     private double edgeAnglesDeviation(PSZTGraph graph) {
-
-
         double value = 0;
         for (PSZTVertex vertex: graph.getVertices()) {
-
-            java.util.List<PSZTEdge> edges = graph.incidentToVertex(vertex);
+            List<PSZTEdge> edges = graph.incidentToVertex(vertex);
 
             for (int i = 0; i < edges.size(); i++) {
                 for (int j = i + 1; j < edges.size(); j++) {
@@ -62,11 +47,9 @@ public class GraphQualityEvaluator {
         }
 
         return value;
-
     }
 
-    private int numberOfVerticesCrossings(PSZTGraph graph) {
-
+    private int numberOfVerticesWithEdgesCrossings(PSZTGraph graph) {
         int sum = 0;
         for(PSZTVertex vertex: graph.getVertices()) {
 
@@ -89,12 +72,20 @@ public class GraphQualityEvaluator {
         return sum;
     }
 
-    private double relativeErrorOfEdgeLengths(PSZTGraph graph) {
+    private int numberOfVerticesWithVerticesCrossings(PSZTGraph graph) {
+        int sum = 0;
+        for (PSZTVertex v1 : graph.getVertices()) {
+            for (PSZTVertex v2 : graph.getVertices()) {
+                if (vertexToVertexDistance(v1,v2) < 2.*arguments.getPreferredVertexRadius()) sum++;
+            }
+        }
+        return sum/2;   // because each crossing counted twice
+    }
 
+    private double relativeErrorOfEdgeLengths(PSZTGraph graph) {
         List<PSZTEdge> edges = graph.getEdges();
 
         double numberOfEdges = edges.size();
-
 
         double sum = 0;
 
@@ -104,59 +95,33 @@ public class GraphQualityEvaluator {
             sum += difference * difference;
         }
 
-
         return sum;
     }
 
-
-
-
     private int numberOfCrossings(PSZTGraph graph) {
-        // TODO bugged! check if have common vertex
-
         List<PSZTEdge> edges = graph.getEdges();
 
         int length = edges.size();
         int numberOfCrossingEdges = 0;
         for (int i = 0; i < length; i++) {
             for (int j = i + 1; j < length; j++) {
-
                 PSZTEdge firstEdge = edges.get(i);
                 PSZTEdge secondEdge = edges.get(j);
 
-                //First edge
-                double firstEdgeFirstX = firstEdge.getFrom().getX();
-                double firstEdgeFirstY = firstEdge.getFrom().getY();
-                double firstEdgeSecondX = firstEdge.getTo().getX();
-                double firstEdgeSecondY = firstEdge.getTo().getY();
+                PSZTVertex v1f = firstEdge.getFrom();
+                PSZTVertex v1t = firstEdge.getTo();
+                PSZTVertex v2f = secondEdge.getFrom();
+                PSZTVertex v2t = secondEdge.getTo();
 
-                Line2D.Double firstLine = new Line2D.Double(firstEdgeFirstX, firstEdgeFirstY, firstEdgeSecondX, firstEdgeSecondY);
+                if (v1f == v2f || v1f == v2t || v1t == v2f || v1t == v2t) continue; // because of common vertex
 
-                //Second edge
-                double secondEdgeFirstX = secondEdge.getFrom().getX();
-                double secondEdgeFirstY = secondEdge.getFrom().getY();
-                double secondEdgeSecondX = secondEdge.getTo().getX();
-                double secondEdgeSecondY = secondEdge.getTo().getY();
-
-                //Check if two edges have the same indicent vertex. If yes - continue, we don't want to sum them
-                //To do this
-
-
-                if ((firstEdgeFirstX == secondEdgeSecondX && firstEdgeFirstY == secondEdgeSecondY)
-                        || (firstEdgeSecondX == secondEdgeFirstX && firstEdgeSecondY == secondEdgeFirstY)) {
-                    continue;
-                }
-
-                Line2D.Double secondLine = new Line2D.Double(secondEdgeFirstX, secondEdgeFirstY, secondEdgeSecondX, secondEdgeSecondY);
-
-                if (get_line_intersection(firstLine, secondLine) != null) {
-
-                    numberOfCrossingEdges += 1;
-                }
+                if (Line2D.linesIntersect(
+                        v1f.getX(), v1f.getY(), v1t.getX(), v1t.getY(),
+                        v2f.getX(), v2f.getY(), v2t.getX(), v2t.getY()
+                        )) numberOfCrossingEdges++;
             }
         }
-        return numberOfCrossingEdges;    // hardcoded, because of common point
-
+        return numberOfCrossingEdges;
     }
 
     private  static double angleBetween2Lines(Line2D line1, Line2D line2)
@@ -174,30 +139,10 @@ public class GraphQualityEvaluator {
         return Math.abs((P.getX()-A.getX())*(B.getY()-A.getY())-(P.getY()-A.getY())*(B.getX()-A.getX()))/normalLength;
     }
 
-    private static Point get_line_intersection(Line2D.Double pLine1, Line2D.Double pLine2)
-    {
-        Point
-                result = null;
-
-        double
-                s1_x = pLine1.x2 - pLine1.x1,
-                s1_y = pLine1.y2 - pLine1.y1,
-
-                s2_x = pLine2.x2 - pLine2.x1,
-                s2_y = pLine2.y2 - pLine2.y1,
-
-                s = (-s1_y * (pLine1.x1 - pLine2.x1) + s1_x * (pLine1.y1 - pLine2.y1)) / (-s2_x * s1_y + s1_x * s2_y),
-                t = ( s2_x * (pLine1.y1 - pLine2.y1) - s2_y * (pLine1.x1 - pLine2.x1)) / (-s2_x * s1_y + s1_x * s2_y);
-
-        if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
-        {
-            // Collision detected
-            result = new Point(
-                    (int) (pLine1.x1 + (t * s1_x)),
-                    (int) (pLine1.y1 + (t * s1_y)));
-        }   // end if
-
-        return result;
+    private double vertexToVertexDistance(PSZTVertex v1, PSZTVertex v2) {
+        double dx = v1.getX() - v2.getX();
+        double dy = v1.getY() - v2.getY();
+        return Math.sqrt(dx*dx+dy*dy);
     }
 
 }
