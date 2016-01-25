@@ -4,8 +4,8 @@ import org.apache.commons.math3.distribution.UniformIntegerDistribution;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
 import org.javatuples.Pair;
 
-import java.lang.reflect.Array;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 
@@ -20,21 +20,21 @@ public class GraphEvolutionGenerator {
     private int populationSize;
     private int canvasWidth;
     private int canvasHeight;
-    private double vertexDiameter;
+    private double vertexRadius;
     private double variance;
-    private double mutationProbability = 0.1;
+    private double mutationProbability = 0.3;
 //    private double crossoverProbability = 0.3;
 
     private double varianceCross =  0.2;
 
     private int generation = 1;
     private GraphQualityEvaluator evaluator;
-    public GraphEvolutionGenerator(PSZTGraph graph, GraphQualityArguments arguments, int populationSize, int canvasWidth, int canvasHeight, double vertexDiameter, double variance){
+    public GraphEvolutionGenerator(PSZTGraph graph, GraphQualityArguments arguments, int populationSize, int canvasWidth, int canvasHeight, double vertexRadius, double variance){
         this.graph = graph;
         this.populationSize = populationSize;
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
-        this.vertexDiameter = vertexDiameter;
+        this.vertexRadius = vertexRadius;
 
         this.variance = variance;
         this.evaluator = new GraphQualityEvaluator(arguments);
@@ -59,8 +59,9 @@ public class GraphEvolutionGenerator {
 
 
 
-            double randomX =  ThreadLocalRandom.current().nextDouble(vertexDiameter/2, canvasWidth - vertexDiameter/2);
-            double randomY = ThreadLocalRandom.current().nextDouble(vertexDiameter/2, canvasHeight - vertexDiameter/2);
+            double randomX =  ThreadLocalRandom.current().nextDouble(vertexRadius , canvasWidth - vertexRadius );
+            double randomY = ThreadLocalRandom.current().nextDouble(vertexRadius , canvasHeight - vertexRadius );
+
             v.setX(randomX);
             v.setY(randomY);
         }
@@ -73,8 +74,6 @@ public class GraphEvolutionGenerator {
 
 
 
-//            double randomX = ThreadLocalRandom.current().nextDouble(- canvasWidth, 2 * canvasWidth);
-//            double randomY = ThreadLocalRandom.current().nextDouble(- canvasHeight, 2 * canvasHeight);
 
             edge.setPointX(midPointX);
             edge.setPointY(midPointY);
@@ -176,10 +175,12 @@ public class GraphEvolutionGenerator {
         for (PSZTGraph graph : population) {
             for (PSZTVertex v : graph.getVertices()) {
                 if (uniformRealDistribution.sample() <= probability) {
-                    NormalDistribution xDistribution = new NormalDistribution(v.getX(), this.variance);
-                    NormalDistribution yDistribution = new NormalDistribution(v.getY(), this.variance);
-                    v.setY(yDistribution.sample());
-                    v.setX(xDistribution.sample());
+
+                    CanvasDistribution distributionX = new CanvasDistribution(canvasHeight, canvasWidth, vertexRadius, new NormalDistribution(v.getX(), this.variance) );
+                    CanvasDistribution distributionY = new CanvasDistribution(canvasHeight, canvasWidth, vertexRadius, new NormalDistribution(v.getY(), this.variance) );
+
+                    v.setX(distributionX.getValidSample(WhichPoint.X));
+                    v.setY(distributionY.getValidSample(WhichPoint.Y));
 
                 }
             }
@@ -201,11 +202,14 @@ public class GraphEvolutionGenerator {
                 PSZTVertex newVertex = newGraph.getVertices().get(i);
                 double sumX = firstVertex.getX() + secondVertex.getX();
                 double sumY = firstVertex.getY() + secondVertex.getY();
-                NormalDistribution distributionX = new NormalDistribution(sumX / 2.0, variance);
-                NormalDistribution distributionY = new NormalDistribution(sumY / 2.0, variance);
 
-                newVertex.setX(distributionX.sample());
-                newVertex.setY(distributionY.sample());
+                CanvasDistribution distributionX = new CanvasDistribution(canvasHeight, canvasWidth, vertexRadius, new NormalDistribution(sumX / 2.0, this.variance) );
+                CanvasDistribution distributionY = new CanvasDistribution(canvasHeight, canvasWidth, vertexRadius, new NormalDistribution(sumY / 2.0, this.variance) );
+
+
+                newVertex.setX(distributionX.getValidSample(WhichPoint.X));
+                newVertex.setY(distributionY.getValidSample(WhichPoint.Y));
+
             }
             return newGraph;
         }
