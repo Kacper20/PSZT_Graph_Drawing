@@ -14,14 +14,14 @@ public class GraphMain {
     public static void main(String[] args) throws IOException {
 
         MainWindow w = new MainWindow();
-
+        PSZTGraphGenerator graphGenerator = new PSZTGraphGenerator(1., 5);
 
 
         try {
             Graph graphToDraw = TinkerGraph.open();
             graphToDraw.io(IoCore.graphml()).readGraph("converted.xml");
-
-            PSZTGraph ourGraph = new PSZTGraph(graphToDraw);
+            PSZTGraph ourGraph = graphGenerator.generateGraph();
+//            PSZTGraph ourGraph = new PSZTGraph(graphToDraw);
 
             w.setPsztGraph(ourGraph);
 
