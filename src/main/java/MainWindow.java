@@ -18,8 +18,9 @@ import java.util.HashMap;
 public class MainWindow {
 
 
-    private String[] labelStrings = {"Radius", "Edge Length", "Visibility Field Width", "Visibility Field Height", "Time Limit", "Population Size"};
-    private Double[] defaultValues = {30.0,100.0,800.0,600.0, 400.0, 5.0};
+    private String[] labelStrings = {"Radius", "Edge Length", "Visibility Field Width", "Visibility Field Height", "Time Limit", "Population Size", "distance punishment",
+                                    "lengthPunishment", "crossingPunishment", "vertexCrossingPunishment", "vertexAnglesPunishment"};
+    private Double[] defaultValues = {30.0,100.0,800.0,600.0, 400.0, 5.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
     private JFrame window;
     private JButton setValuesButton;
     private JButton clearButton;
@@ -50,17 +51,47 @@ public class MainWindow {
         return labels;
     }
 
+    class PSZTWorker extends SwingWorker<Void, Void>
+    {
+        public PSZTWorker(MainWindow m, HashMap h) {
+            this.m = m;
+            this.h = h;
+            run = true;
+        }
+        HashMap h;
+        MainWindow m;
+        boolean run;
 
+        public boolean isRun() {
+            return run;
+        }
+
+        public void setRun(boolean run) {
+            this.run = run;
+        }
+
+        @Override
+        protected Void doInBackground()
+        {
+            m.startGraphsGeneration(h, this);
+            return null;
+        }
+
+    };
     /**
      * Glowne okno programu
      */
     public MainWindow()
     {
         EventQueue.invokeLater(new Runnable(){
+
+
+            PSZTWorker worker;
             MainWindow m;
+            boolean isRunning;
             public void run()
             {
-
+                isRunning = false;
                 window = new JFrame("PSZT_Algorytm_Ewolucyjny");
                 window.setSize(800, 800);
                 window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -83,26 +114,17 @@ public class MainWindow {
                                 values.put(getLabelStrings()[i], defaultValues[i]);
 
                         }
-
-                        SwingWorker worker = new SwingWorker<Void, Void>()
+                        if(isRunning)
                         {
-                            public SwingWorker init(MainWindow m, HashMap h) {
-                                this.m = m;
-                                this.h = h;
-                                return this;
-                            }
-                            HashMap h;
-                            MainWindow m;
-                            @Override
-                            protected Void doInBackground()
-                            {
-                                m.startGraphsGeneration(h);
-                                return null;
-                            }
+                            worker.setRun(false);
+                            worker.cancel(true);
+                        }
 
-                        }.init(m, values);
+                        worker = new PSZTWorker(m, values);
 
                         worker.execute();
+                        isRunning = true;
+//                        System.out.println("click");
 
 
                     }
@@ -209,11 +231,11 @@ public class MainWindow {
         }.init(this));
     }
 
-    public void startGraphsGeneration(HashMap<String, Double> map) {
-        GraphQualityArguments arguments = new GraphQualityArguments(map.get("Edge Length"), map.get("Radius"));
+    public void startGraphsGeneration(HashMap<String, Double> map, PSZTWorker worker) {
+        GraphQualityArguments arguments = new GraphQualityArguments(map.get("distance punishment"), map.get("lengthPunishment"), map.get("lengthPunishment"), map.get("vertexCrossingPunishment"), map.get("vertexAnglesPunishment"), map.get("Edge Length"), map.get("Radius"));
 
         GraphEvolutionGenerator generator = new GraphEvolutionGenerator(ourGraph,arguments, map.get("Population Size").intValue(), map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), 2, 1);
-        while(true)
+        while(worker.isRun())
         {
             long timeLimit = map.get("Time Limit").longValue();
             long begin = System.currentTimeMillis();
