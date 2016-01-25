@@ -20,7 +20,7 @@ public class MainWindow {
 
     private String[] labelStrings = {"Radius", "Edge Length", "Visibility Field Width", "Visibility Field Height", "Time Limit", "Population Size", "distance punishment",
                                     "lengthPunishment", "crossingPunishment", "vertexCrossingPunishment", "vertexAnglesPunishment"};
-    private Double[] defaultValues = {30.0,100.0,800.0,600.0, 400.0, 5.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    private Double[] defaultValues = {30.0,100.0,800.0,600.0, 400.0, 5.0, 1.0, 1.0, 3.0, 1.4, 0.7, 0.4, 2.0};
     private JFrame window;
     private JButton setValuesButton;
     private JButton clearButton;

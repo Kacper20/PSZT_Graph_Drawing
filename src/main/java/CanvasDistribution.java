@@ -36,21 +36,27 @@ public class CanvasDistribution {
     public Double getValidSample(WhichPoint point) {
 
         Double value;
-
+        double radius = 2 * this.radius;
+        value = distribution.sample();
+        if (point == WhichPoint.X && value > (width - radius))  {
+                double diff = value - (width -  radius);
+                value = width - radius - diff;
+        }
+        else if (point == WhichPoint.X && value > (height - radius)) {
+                double diff = value - (height - radius);
+                value = height- radius - diff;
+        }
+        else if (value < radius) {
+            double diff = radius - value;
+            value = radius + diff;
+        }
         if (point == WhichPoint.X) {
-            do {
-                value = distribution.sample();
-            } while (value > width - radius * 2.0  || value < radius * 2.0);
-            assert(value <= width - radius * 2.0 && value >= radius * 2.0);
-
+            assert (value <= (width - radius));
         }
-        else {
-            do {
-                value = distribution.sample();
-            } while (value > height - radius * 2.0 || value < radius * 2.0);
-            assert(value <= height - radius * 2.0 && value >= radius * 2.0);
-
+        if (point == WhichPoint.Y) {
+            assert (value  <= (height - radius));
         }
+        assert(value >= radius);
 
         return value;
 

@@ -59,8 +59,8 @@ public class GraphEvolutionGenerator {
 
 
 
-            double randomX =  ThreadLocalRandom.current().nextDouble(vertexRadius , canvasWidth - vertexRadius );
-            double randomY = ThreadLocalRandom.current().nextDouble(vertexRadius , canvasHeight - vertexRadius );
+            double randomX =  ThreadLocalRandom.current().nextDouble(vertexRadius * 2.0 , canvasWidth - vertexRadius * 2.0);
+            double randomY = ThreadLocalRandom.current().nextDouble(vertexRadius * 2.0 , canvasHeight - vertexRadius * 2.0);
 
             v.setX(randomX);
             v.setY(randomY);
