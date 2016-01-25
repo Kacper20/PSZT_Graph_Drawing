@@ -142,7 +142,7 @@ public class GraphEvolutionGenerator {
 
 
 
-        //TODO: Zmiana sposobu krzyzowania, wydzielic do metody
+        //TODO: Zmiana sposobu krzyzowania, wydzielic do metody 
         UniformIntegerDistribution integerDistribution = new UniformIntegerDistribution(0, oldPopulation.size() - 1);
         while (newPopulation.size() < oldPopulation.size() - 1) {
             int indx1 = integerDistribution.sample();
