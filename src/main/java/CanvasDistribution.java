@@ -42,7 +42,7 @@ public class CanvasDistribution {
                 double diff = value - (width -  radius);
                 value = width - radius - diff;
         }
-        else if (point == WhichPoint.X && value > (height - radius)) {
+        else if (point == WhichPoint.Y && value > (height - radius)) {
                 double diff = value - (height - radius);
                 value = height- radius - diff;
         }
@@ -51,10 +51,16 @@ public class CanvasDistribution {
             value = radius + diff;
         }
         if (point == WhichPoint.X) {
+
             assert (value <= (width - radius));
         }
         if (point == WhichPoint.Y) {
+
             assert (value  <= (height - radius));
+        }
+
+        if (value < radius) {
+            System.out.println("Value!!! less" + value);
         }
         assert(value >= radius);
 
