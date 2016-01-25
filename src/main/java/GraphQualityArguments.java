@@ -4,9 +4,10 @@
 public class GraphQualityArguments {
 
     private double distancePunishment = 0.5;
+
     private double lengthPunishment = 1.5;
-    private double crossingPunishment = 2;
-    private double vertexCrossingPunishment = 3;
+    private double crossingPunishment = 0.3;
+    private double vertexCrossingPunishment = 0.5;
     private double vertexAnglesPunishment = 1.0;
 
     private double  preferredVertexRadius;
