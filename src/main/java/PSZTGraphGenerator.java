@@ -31,8 +31,9 @@ public class PSZTGraphGenerator {
             {
                 if(uniformRealDistribution.sample() <= probabilityOfJoining)
                 {
-                    edges.add(new PSZTEdge(vertices.get(j++), vertices.get(i-1), 0., 0., Integer.toString(edgeIndicies++)));
+                    edges.add(new PSZTEdge(vertices.get(j), vertices.get(i-1), 0., 0., Integer.toString(edgeIndicies++)));
                 }
+                j++;
             }
         }
         PSZTGraph generatedGraph = new PSZTGraph(vertices, edges);
