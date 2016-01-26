@@ -15,8 +15,6 @@ public class GraphMain {
 
         MainWindow w = new MainWindow();
 
-
-
         try {
             Graph graphToDraw = TinkerGraph.open();
             graphToDraw.io(IoCore.graphml()).readGraph("converted.xml");

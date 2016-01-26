@@ -36,7 +36,6 @@ public class CanvasDistribution {
     public Double getValidSample(WhichPoint point) {
 
         Double value;
-        double radius = 2 * this.radius;
         value = distribution.sample();
         if (point == WhichPoint.X && value > (width - radius))  {
                 double diff = value - (width -  radius);
@@ -50,6 +49,8 @@ public class CanvasDistribution {
             double diff = radius - value;
             value = radius + diff;
         }
+
+
         if (point == WhichPoint.X) {
 
             assert (value <= (width - radius));
@@ -59,9 +60,8 @@ public class CanvasDistribution {
             assert (value  <= (height - radius));
         }
 
-        if (value < radius) {
-            System.out.println("Value!!! less" + value);
-        }
+        assert(value >= radius);
+
         assert(value >= radius);
 
         return value;
