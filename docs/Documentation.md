@@ -35,15 +35,16 @@ Pierwszym krokiem jest wygenerowanie populacji startowej. Generowana ona jest za
 
 
 ######Selekcja
-Drugim krokiem jest selekcja. Zastosowane zostały dwa rodzaje selekcji:
-Na początku, osobnik z najlepszą wartością funkcji fitness dostaje awans do następnej populacji.
-Kolejnym krokiem jest selekcja części z reszty osobników do nowej populacji z użyciem Fitness proportionate selection. Według tej reguły, dla każdego osobnika obliczane jest prawdopodobieństwo bycia wybranym jako:  P(x) = f(x) / (suma_fitness_dla_populacji),
-gdzie f - funkcja jakościowa
-x - osobnik z populacji.
+Drugim krokiem jest selekcja. Zastosowana została selekcja turniejowa. 
+Jej przebieg jest następujący: n razy, gdzie n to rozmiar populacji, następuje losowanie dwóch osobników z niej z rozkładem jednostajnym.
+Między osobnikami odbywa się turniej - tj. lepszy z nich przedostaje się do nowej populacji.
+
 
 
 ######Krzyżowanie
-Następnie, dopóki nie wypełnimy całej nowej populacji, znajdujemy losowo(za pomocą rozkładu normalnego) dwa osobniki ze starej populacji i krzyżujemy je.
+
+*UWAGA*Krzyżowanie w obecnej wersji jest wyłączone - uznaliśmy że działa b. podobnie do mutacji i jest zbędne.
+
 Zastosowaliśmy krzyżowanie, w którym graf wynikowy powstaje następująco:
 Przyjmijmy, że r1 oraz r2 to rodzice grafu c.
 Dla każdego wierzchołka w c ustawiamy x wierzchołka jako wartość wylosowaną generatorem liczb z rozkładem normalnym o średniej równej średniej arytmetycznej odpowiadających współrzędnych x rodziców, oraz wariancji w. Analogicznie postępujemy dla zmiennej y.
@@ -51,17 +52,20 @@ Dla każdego wierzchołka w c ustawiamy x wierzchołka jako wartość wylosowan�
 
 ######Mutacja
 Kolejnym etapem jest zmutowanie nowej populacji.
-Mutacji podlegają wszystkie osobniki oprócz najlepszego osobnika, który został wybrany w drodze selekcji elitarnej.
-
+Mutacji podlegają wszystkie osobniki.
 Dla wszystkich osobników, które podlegają mutacji przechodzimy po ich wierzchołkach.
 Z prawdopodobieństwem zadanym w aplikacji wierzchołek podlega następującej operacji:
-Do współrzędnej dodawany jest mały jitter uzyskany za pomocą zmiennej o rozkładzie normalnym o wariancji zadanej w aplikacji.
+Do współrzędnej dodawany jest mały jitter uzyskany za pomocą zmiennej o rozkładzie normalnym o wariancji proporcjonalnej do rozmiarów okna.
 
+
+######Funkcja fitness
+
+TODO Konrad - opis funkcji, jakie obliczenia bierze pod uwagę.
 
 ####Opis przeprowadzonych testów:
 
 Testy przeprowadzone zostały głównie na grafach o strukturze grid.
-
+TODO Tomek - jakieś przykłady, wspomnij generator.
 
 #### Sposób budowania i uruchomienia:
 Projekt budowany jest za pomocą narzędzia maven. Wszystkie używane biblioteki wyspecyfikowane są w pliku pom.xml.
@@ -89,12 +93,13 @@ Wyświetlanie odbywa się za pomocą generowania pliku SVG na podstawie wewnętr
 
 ####Opis mocnych i słabych stron projektu:
 
+TODO Tomek.
 
 
 ####Podział pracy:
 
 Podział pracy był następujący:
 
-Tomasz Nazarewicz - panel użytkownika,
-Konrad Sikorski - generator SVG, obliczenia geometryczne.
-Kacper Harasim - stworzenie struktury modelu, konwersji pomiędzy
+Tomasz Nazarewicz - panel użytkownika, generator grafów.
+Konrad Sikorski - generator SVG, obliczenia geometryczne, obliczenia funkcji fitness.
+Kacper Harasim - stworzenie struktury modelu, konwersji pomiędzy obiektami, algorytm.

@@ -26,7 +26,7 @@ public class GraphEvolutionGenerator {
 //    private double crossoverProbability = 0.3;
 
     private double varianceCross =  0.2;
-
+    private PSZTGraph crossedGraph = null;
     private int generation = 1;
     private GraphQualityEvaluator evaluator;
     public GraphEvolutionGenerator(PSZTGraph graph, GraphQualityArguments arguments, int populationSize, int canvasWidth, int canvasHeight, double vertexRadius, double variance){
@@ -59,8 +59,9 @@ public class GraphEvolutionGenerator {
 
 
 
-            double randomX =  ThreadLocalRandom.current().nextDouble(vertexRadius * 2.0 , canvasWidth - vertexRadius * 2.0);
-            double randomY = ThreadLocalRandom.current().nextDouble(vertexRadius * 2.0 , canvasHeight - vertexRadius * 2.0);
+
+            double randomX =  ThreadLocalRandom.current().nextDouble(vertexRadius  , canvasWidth - vertexRadius );
+            double randomY = ThreadLocalRandom.current().nextDouble(vertexRadius , canvasHeight - vertexRadius );
 
             v.setX(randomX);
             v.setY(randomY);
@@ -160,7 +161,6 @@ public class GraphEvolutionGenerator {
 //                newPopulation.add(graph);
 //            }
 //        }
-
 //        //TODO: Zmiana sposobu krzyzowania, wydzielic do metody
 //        UniformIntegerDistribution integerDistribution = new UniformIntegerDistribution(0, oldPopulation.size() - 1);
 //        while (newPopulation.size() < oldPopulation.size() - 1) {
@@ -198,7 +198,7 @@ public class GraphEvolutionGenerator {
             meanGraph.getVertices().get(i).setY(meanY);
 
         }
-        double quality = evaluator.qualityOfGraph(meanGraph);
+        crossedGraph = meanGraph;
 
 
         return reproductedPopulation;
@@ -277,7 +277,14 @@ public class GraphEvolutionGenerator {
                 return 0;
             }
         });
+
+
         double value = evaluator.qualityOfGraph(graph);
+        if (crossedGraph != null) {
+            double quality = evaluator.qualityOfGraph(crossedGraph);
+            if (quality > value) { return new Pair<PSZTGraph, Double>(crossedGraph, quality);  }
+        }
+
         return new Pair<PSZTGraph, Double>(graph, value);
     }
 }
