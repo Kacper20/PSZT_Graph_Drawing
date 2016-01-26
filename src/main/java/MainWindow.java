@@ -234,7 +234,7 @@ public class MainWindow {
     public void startGraphsGeneration(HashMap<String, Double> map, PSZTWorker worker) {
         GraphQualityArguments arguments = new GraphQualityArguments(map.get("distance punishment"), map.get("lengthPunishment"), map.get("lengthPunishment"), map.get("vertexCrossingPunishment"), map.get("vertexAnglesPunishment"), map.get("Edge Length"), map.get("Radius"));
 
-        GraphEvolutionGenerator generator = new GraphEvolutionGenerator(ourGraph,arguments, map.get("Population Size").intValue(), map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), 2, 1);
+        GraphEvolutionGenerator generator = new GraphEvolutionGenerator(ourGraph,arguments, map.get("Population Size").intValue(), map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), map.get("Radius"), 1);
         while(worker.isRun())
         {
             long timeLimit = map.get("Time Limit").longValue();
