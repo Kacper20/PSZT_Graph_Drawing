@@ -26,7 +26,7 @@ public class GraphEvolutionGenerator {
 //    private double crossoverProbability = 0.3;
 
     private double varianceCross =  0.2;
-
+    private PSZTGraph crossedGraph = null;
     private int generation = 1;
     private GraphQualityEvaluator evaluator;
     public GraphEvolutionGenerator(PSZTGraph graph, GraphQualityArguments arguments, int populationSize, int canvasWidth, int canvasHeight, double vertexRadius, double variance){
@@ -198,7 +198,7 @@ public class GraphEvolutionGenerator {
             meanGraph.getVertices().get(i).setY(meanY);
 
         }
-        double quality = evaluator.qualityOfGraph(meanGraph);
+        crossedGraph = meanGraph;
 
 
         return reproductedPopulation;
@@ -277,7 +277,14 @@ public class GraphEvolutionGenerator {
                 return 0;
             }
         });
+
+        
         double value = evaluator.qualityOfGraph(graph);
+        if (crossedGraph != null) {
+            double quality = evaluator.qualityOfGraph(crossedGraph);
+            if (quality > value) { return new Pair<PSZTGraph, Double>(crossedGraph, quality);  }
+        }
+
         return new Pair<PSZTGraph, Double>(graph, value);
     }
 }
