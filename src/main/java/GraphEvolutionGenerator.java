@@ -59,8 +59,9 @@ public class GraphEvolutionGenerator {
 
 
 
-            double randomX =  ThreadLocalRandom.current().nextDouble(vertexRadius * 2.0 , canvasWidth - vertexRadius * 2.0);
-            double randomY = ThreadLocalRandom.current().nextDouble(vertexRadius * 2.0 , canvasHeight - vertexRadius * 2.0);
+
+            double randomX =  ThreadLocalRandom.current().nextDouble(vertexRadius  , canvasWidth - vertexRadius );
+            double randomY = ThreadLocalRandom.current().nextDouble(vertexRadius , canvasHeight - vertexRadius );
 
             v.setX(randomX);
             v.setY(randomY);
@@ -160,7 +161,6 @@ public class GraphEvolutionGenerator {
 //                newPopulation.add(graph);
 //            }
 //        }
-
 //        //TODO: Zmiana sposobu krzyzowania, wydzielic do metody
 //        UniformIntegerDistribution integerDistribution = new UniformIntegerDistribution(0, oldPopulation.size() - 1);
 //        while (newPopulation.size() < oldPopulation.size() - 1) {
@@ -278,7 +278,7 @@ public class GraphEvolutionGenerator {
             }
         });
 
-        
+
         double value = evaluator.qualityOfGraph(graph);
         if (crossedGraph != null) {
             double quality = evaluator.qualityOfGraph(crossedGraph);

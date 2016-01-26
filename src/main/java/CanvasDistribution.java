@@ -51,6 +51,8 @@ public class CanvasDistribution {
         }
 
 
+
+
         if (point == WhichPoint.X) {
 
             assert (value <= (width - radius));
@@ -62,7 +64,6 @@ public class CanvasDistribution {
 
         assert(value >= radius);
 
-        assert(value >= radius);
 
         return value;
 
