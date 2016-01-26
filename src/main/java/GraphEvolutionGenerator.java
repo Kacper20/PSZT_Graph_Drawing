@@ -198,7 +198,7 @@ public class GraphEvolutionGenerator {
             meanGraph.getVertices().get(i).setY(meanY);
 
         }
-        double quality = evaluator.qualityOfGraph(graph);
+        double quality = evaluator.qualityOfGraph(meanGraph);
 
 
         return reproductedPopulation;
