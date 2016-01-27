@@ -277,6 +277,8 @@ public class MainWindow {
             PSZTGraphToSVGConverter converter = new PSZTGraphToSVGConverter(bestGraph.getValue0(), map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), map.get("Radius"));
             converter.doTheMagic();
             Document doc = converter.getSvgDraw().getDoc();
+            panel.setSize(map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue());
+            svgCanvas.setSize(map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue());
             this.getSvgCanvas().setDocument(doc);
         }
 
