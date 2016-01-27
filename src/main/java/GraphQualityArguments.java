@@ -2,7 +2,6 @@
  * Created by kacper on 11.01.2016.
  */
 public class GraphQualityArguments {
-
     private double distancePunishment = 0.5;
 
     private double lengthPunishment = 1.5;
@@ -10,10 +9,8 @@ public class GraphQualityArguments {
     private double vertexCrossingPunishment = 0.5;
     private double vertexAnglesPunishment = 1.0;
 
-    private double  preferredVertexRadius;
+    private double preferredVertexRadius;
     private double preferredLength;
-
-    public GraphQualityArguments() {};  // TODO remove!
 
     public GraphQualityArguments(double distancePunishment, double lengthPunishment, double crossingPunishment, double vertexCrossingPunishment, double vertexAnglesPunishment, double preferredVertexRadius, double preferredLength) {
         this.distancePunishment = distancePunishment;
@@ -23,11 +20,6 @@ public class GraphQualityArguments {
         this.vertexAnglesPunishment = vertexAnglesPunishment;
         this.preferredVertexRadius = preferredVertexRadius;
         this.preferredLength = preferredLength;
-    }
-
-    public GraphQualityArguments(double preferredLength, double preferredVertexRadius) {
-        this.preferredLength = preferredLength;
-        this.preferredVertexRadius = preferredVertexRadius;
     }
 
     public double getDistancePunishment() {

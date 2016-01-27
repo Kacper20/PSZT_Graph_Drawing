@@ -1,7 +1,7 @@
 /**
  * Created by kacper on 11.01.2016.
  */
-public class PSZTEdge implements Cloneable{
+public class PSZTEdge implements Cloneable {
     private PSZTVertex from;
     private PSZTVertex to;
     private Double pointX;
@@ -58,31 +58,6 @@ public class PSZTEdge implements Cloneable{
         // Does not clone vertices! Only values!
         Double newPointX = pointX != null ? Double.valueOf(pointX) : null;
         Double newPointY = pointY != null ? Double.valueOf(pointY) : null;
-        return new PSZTEdge(null, null, newPointX, newPointY, ""+id);
-
-    }
-
-    public void setPointX(Double pointX) {
-        this.pointX = pointX;
-    }
-
-    public void setPointY(Double pointY) {
-        this.pointY = pointY;
-    }
-
-
-    public double getCircleRadius() {
-
-        PVector point = new PVector(from.getX(), from.getY());
-        return triangleFromBow().GetCircumcenter().dist(point);
-    }
-
-    public Triangle triangleFromBow() {
-        PVector p1 = new PVector(from.getX(), from.getY());
-        PVector p2 = new PVector(to.getX(), to.getY());
-        PVector p3 = new PVector(pointX, pointY);
-
-        PVector[] arr = new PVector[] {p1, p2, p3};
-        return new Triangle(arr);
+        return new PSZTEdge(null, null, newPointX, newPointY, "" + id);
     }
 }
