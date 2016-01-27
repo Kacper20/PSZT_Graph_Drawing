@@ -108,7 +108,14 @@ Wyświetlanie odbywa się za pomocą generowania pliku SVG na podstawie wewnętr
 
 ####Opis mocnych i słabych stron projektu:
 
+Słabe strony:
+Nie ma żadnych liczbowych kryteriów "ładności", utrudnia to przeprowadzanie testów oraz wybór parametrów a także
+ustalenie poziomu dopasowania wymaganego przez użytkownika.
+Przy grafach spełniających założenia w małym stopniu (dużo przecięć krawędzi np. graf pełny) sprawdzenie czy wynik jest
+zadowalający.
 
+Mocne strony:
+Dla algorytmu nie ma znaczenia rodzaj grafu.
 
 
 ####Podział pracy:
