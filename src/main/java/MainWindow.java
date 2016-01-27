@@ -119,7 +119,7 @@ public class MainWindow {
                 exportButton.setEnabled(false);
 
                 startStopButton.addActionListener(e -> {
-                    if(((JButton)(e.getSource())).getText() == "Start") {
+                    if(((JButton)(e.getSource())).getText().equals("Start")) {
                         ((JButton)(e.getSource())).setText("Stop");
                         HashMap<String, Double> values = new HashMap<String, Double>();
                         for (int i = 0; i < m.getLabelStrings().length; i++) {
@@ -132,12 +132,14 @@ public class MainWindow {
                         worker = new PSZTWorker(m, values);
                         worker.execute();
                         exportButton.setEnabled(false);
+                        resetButton.setEnabled(false);
                     }
                     else
                     {
                         ((JButton)(e.getSource())).setText("Start");
                         worker.setRun(false);
                         exportButton.setEnabled(true);
+                        resetButton.setEnabled(true);
                     }
 
                 });
