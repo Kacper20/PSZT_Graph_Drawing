@@ -12,7 +12,7 @@ public class GraphMain {
     public static void main(String[] args) throws IOException {
         MainWindow w = new MainWindow();
 
-        PSZTGraphGenerator graphGenerator = new PSZTGraphGenerator(0.5, 8);
+        PSZTGraphGenerator graphGenerator = new PSZTGraphGenerator(0.5, 20);
 
         PSZTGraph ourGraph = graphGenerator.generateGraph();
         w.setPsztGraph(ourGraph);
