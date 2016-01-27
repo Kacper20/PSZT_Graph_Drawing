@@ -49,6 +49,8 @@ public class GraphQualityEvaluator {
         return (1. / (edgeAnglesDeviation(graph) + 1.));
     }
 
+//Cumulative square deviation of edge angles from ideal values
+
     private double edgeAnglesDeviation(PSZTGraph graph) {
         double value = 0;
         for (PSZTVertex vertex : graph.getVertices()) {

@@ -99,7 +99,6 @@ public class GraphEvolutionGenerator {
             reproductedPopulation.add(first.getValue1() >= second.getValue1() ? first.getValue0() : second.getValue0());
         }
 
-        // the best is the last one
         mutatePopulation(reproductedPopulation);
 
         PSZTGraph meanGraph = (PSZTGraph) reproductedPopulation.get(reproductedPopulation.size() - 1).clone();
