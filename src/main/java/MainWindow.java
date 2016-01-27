@@ -273,7 +273,7 @@ public class MainWindow {
     }
 
     public void startGraphsGeneration(HashMap<String, Double> map, PSZTWorker worker) {
-        if(arguments == null) arguments = new GraphQualityArguments(map.get("lengthPunishment"), map.get("crossingEEPunishment"), map.get("crossingEVPunishment"), map.get("crossingVVPunishment"), map.get("vertexAnglesPunishment"), map.get("Edge Length"), map.get("Radius"));
+        if(arguments == null) arguments = new GraphQualityArguments(map.get("lengthPunishment"), map.get("crossingEEPunishment"), map.get("crossingEVPunishment"), map.get("crossingVVPunishment"), map.get("vertexAnglesPunishment"), map.get("Radius"), map.get("Edge Length"));
 
         if(generator == null){
             generator = new GraphEvolutionGenerator(ourGraph,arguments, map.get("Population Size").intValue(), map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), map.get("Radius"), 1);
