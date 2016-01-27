@@ -15,7 +15,7 @@ public class GraphMain {
 
         MainWindow w = new MainWindow();
 
-        PSZTGraphGenerator graphGenerator = new PSZTGraphGenerator(0.1, 20);
+        PSZTGraphGenerator graphGenerator = new PSZTGraphGenerator(0.5, 8);
 
 
         try {

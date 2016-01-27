@@ -27,7 +27,7 @@ public class MainWindow {
 
     private JLabel[] labels;
     private JTextField[] params;
-
+    private JButton stopButton;
     private JPanel panel;
     private JSVGCanvas svgCanvas;
     private JLabel fitness;
@@ -98,8 +98,10 @@ public class MainWindow {
                 window.setLayout(new GridBagLayout());
                 // SVG do wyswietlenia w oknie
                 svgCanvas = new JSVGCanvas();
+                stopButton = new JButton("Stop");
                 setValuesButton = new JButton("Set Values");
                 clearButton = new JButton("Clear");
+
                 setValuesButton.addActionListener((new ActionListener()
                 {
                     MainWindow m;
@@ -157,23 +159,41 @@ public class MainWindow {
                         return this;
                     }
                 }).init(m));
+
+                stopButton.addActionListener(new ActionListener() {
+                    MainWindow m;
+                    @Override
+
+                    public void actionPerformed(ActionEvent e) {
+                        worker.cancel(true);
+                        worker.setRun(false);
+
+                    }
+                    public ActionListener init(MainWindow mm)
+                    {
+                        m = mm;
+                        return this;
+                    }
+                }.init(m));
                 fitness = new JLabel("Fitness:");
                 population = new JLabel("Population:");
                 panel = new JPanel();
                 GridBagConstraints c = new GridBagConstraints();
                 // ustawianie komponentow w oknie
-                int xoffset, length;
+                int xoffset, length, secondElementOffset;
                 for(int i = 0; i < labels.length; i++)
                 {
                     if(i <= labels.length/2) {
                         xoffset = 1;
                         length = 1;
+                        secondElementOffset = 1;
                     }
                     else {
                         xoffset = 3;
                         length = 2;
+                        secondElementOffset = 2;
                     }
-                    this.setConstrainst(c, xoffset+1, i%(labels.length/2 + 1), length, 1, 0, 0, length, 1, GridBagConstraints.HORIZONTAL);
+                    this.setConstrainst(c, xoffset+secondElementOffset, i%(labels.length/2 + 1), length, 1, 0, 0, length, 1, GridBagConstraints.HORIZONTAL);
                     window.getContentPane().add(params[i], c);
                     this.setConstrainst(c, xoffset, i%(labels.length/2 + 1), length, 1, 0, 0, length, 1, GridBagConstraints.NONE);
                     window.getContentPane().add(labels[i], c);
@@ -184,6 +204,8 @@ public class MainWindow {
                 this.setConstrainst(c, 2, labels.length/2 +1 , 1, 1, 0, 0, 1, 1, GridBagConstraints.NONE);
                 window.getContentPane().add(clearButton, c);
                 this.setConstrainst(c, 3, labels.length/2 +1 , 1, 1, 0, 0, 1, 1, GridBagConstraints.NONE);
+                window.getContentPane().add(stopButton, c);
+                this.setConstrainst(c, 4, labels.length/2 +1 , 1, 1, 0, 0, 1, 1, GridBagConstraints.NONE);
                 window.getContentPane().add(fitness, c);
                 this.setConstrainst(c, 5, labels.length/2 +1 , 1, 1, 0, 0, 1, 1, GridBagConstraints.NONE);
                 window.getContentPane().add(population, c);
