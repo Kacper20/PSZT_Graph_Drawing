@@ -2,9 +2,6 @@
  * Created by kacper on 11.01.2016.
  */
 public class GraphQualityArguments {
-
-
-
     private double lengthPunishment = 1.5;
     private double crossingEEPunishment = 0.3;
     private double crossingEVPunishment = 0.5;
@@ -23,10 +20,6 @@ public class GraphQualityArguments {
         this.preferredVertexRadius = preferredVertexRadius;
         this.preferredLength = preferredLength;
     }
-
-    public GraphQualityArguments() {};  // TODO remove!
-
-
 
     public GraphQualityArguments(double preferredLength, double preferredVertexRadius) {
         this.preferredLength = preferredLength;

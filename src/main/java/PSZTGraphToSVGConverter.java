@@ -22,7 +22,7 @@ public class PSZTGraphToSVGConverter {
     public PSZTGraphToSVGConverter(PSZTGraph graph, Integer canvasWidth, Integer canvasHeight, Double radius) {
         this.graph = graph;
         this.radius = radius;
-        this.svgDraw = new SVGDraw(canvasWidth, canvasHeight, "Graf", "#ADFF2F", "#FFD700", 4);
+        this.svgDraw = new SVGDraw(canvasWidth, canvasHeight, "Graf", "#ADFF2F", "#FFD700", 2);
     }
 
     public void doTheMagic() {
