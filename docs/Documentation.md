@@ -35,7 +35,7 @@ Pierwszym krokiem jest wygenerowanie populacji startowej. Generowana ona jest za
 
 
 ######Selekcja
-Drugim krokiem jest selekcja. Zastosowana została selekcja turniejowa. 
+Drugim krokiem jest selekcja. Zastosowana została selekcja turniejowa.
 Jej przebieg jest następujący: n razy, gdzie n to rozmiar populacji, następuje losowanie dwóch osobników z niej z rozkładem jednostajnym.
 Między osobnikami odbywa się turniej - tj. lepszy z nich przedostaje się do nowej populacji.
 
@@ -58,11 +58,11 @@ Z prawdopodobieństwem zadanym w aplikacji wierzchołek podlega następującej o
 Do współrzędnej dodawany jest mały jitter uzyskany za pomocą zmiennej o rozkładzie normalnym o wariancji proporcjonalnej do rozmiarów okna.
 
 
-######Funkcja fitness
+###### Funkcja fitness
+Wartość funkcji fitness dla danego osobnika mówi, jak *ładny* jest to graf. Wartość ta jest obliczana jako suma wartości wprowadzonych przez użytkownika współczynników pomnożonych przez *jakość* odpowiadającego mu parametru. Jakość jest obliczana funkcją *F(x) = 1/(1+x)*, gdzie *x* to wielkość przewinienia dla danego parametru.
 
-TODO Konrad - opis funkcji, jakie obliczenia bierze pod uwagę.
 
-####Opis przeprowadzonych testów:
+#### Opis przeprowadzonych testów:
 
 Testy przeprowadzone zostały głównie na grafach o strukturze grid.
 TODO Tomek - jakieś przykłady, wspomnij generator.
@@ -73,7 +73,16 @@ Głównym plikiem programu jest GraphMain.java, który odpowiada za wyświetleni
 Wyświetlanie odbywa się za pomocą generowania pliku SVG na podstawie wewnętrznej struktury grafu w programie.
 
 
-####Opis  parametrów:
+#### Opis  parametrów:
+|Parametr|Przewinienie|
+|--------|------------|
+|Przecięcie krawędź-krawędź|Liczba przecięć|
+|Przecięcie krawędź-wierzchołek|Liczba par (V,E), gdzie V jest rysowane na E, ale V nie jest żadnym z końców E|
+|Przecięcie wierzchołek-wierzchołek|Liczba par (V1,V2) takich, że V1 jest rysowane na V2|
+|Odchylenie od zadanej przez użytkownika długości krawędzi|Suma wariancji krawędzi w stosunku do zadanej przez uzytkownika wartości podzielona przez iloczyn tej wartości z liczbą krawędzi|
+
+
+
 
 #####Modyfikowalne:
 * promień wierzchołka
