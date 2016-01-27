@@ -2,32 +2,35 @@
  * Created by kacper on 11.01.2016.
  */
 public class GraphQualityArguments {
-    private double distancePunishment = 0.5;
+
+
 
     private double lengthPunishment = 1.5;
-    private double crossingPunishment = 0.3;
-    private double vertexCrossingPunishment = 0.5;
+    private double crossingEEPunishment = 0.3;
+    private double crossingEVPunishment = 0.5;
+    private double crossingVVPunishment = 0.5;
     private double vertexAnglesPunishment = 1.0;
 
-    private double preferredVertexRadius;
+    private double  preferredVertexRadius;
     private double preferredLength;
 
-    public GraphQualityArguments(double distancePunishment, double lengthPunishment, double crossingPunishment, double vertexCrossingPunishment, double vertexAnglesPunishment, double preferredVertexRadius, double preferredLength) {
-        this.distancePunishment = distancePunishment;
+    public GraphQualityArguments(double lengthPunishment, double crossingEEPunishment, double crossingEVPunishment, double crossingVVPunishment, double vertexAnglesPunishment, double preferredVertexRadius, double preferredLength) {
         this.lengthPunishment = lengthPunishment;
-        this.crossingPunishment = crossingPunishment;
-        this.vertexCrossingPunishment = vertexCrossingPunishment;
+        this.crossingEEPunishment = crossingEEPunishment;
+        this.crossingEVPunishment = crossingEVPunishment;
+        this.crossingVVPunishment = crossingVVPunishment;
         this.vertexAnglesPunishment = vertexAnglesPunishment;
         this.preferredVertexRadius = preferredVertexRadius;
         this.preferredLength = preferredLength;
     }
 
-    public double getDistancePunishment() {
-        return distancePunishment;
-    }
+    public GraphQualityArguments() {};  // TODO remove!
 
-    public void setDistancePunishment(double distancePunishment) {
-        this.distancePunishment = distancePunishment;
+
+
+    public GraphQualityArguments(double preferredLength, double preferredVertexRadius) {
+        this.preferredLength = preferredLength;
+        this.preferredVertexRadius = preferredVertexRadius;
     }
 
     public double getLengthPunishment() {
@@ -38,22 +41,29 @@ public class GraphQualityArguments {
         this.lengthPunishment = lengthPunishment;
     }
 
-    public double getCrossingPunishment() {
-        return crossingPunishment;
+    public double getCrossingEEPunishment() {
+        return crossingEEPunishment;
     }
 
-    public void setCrossingPunishment(double crossingPunishment) {
-        this.crossingPunishment = crossingPunishment;
+    public void setCrossingEEPunishment(double crossingEEPunishment) {
+        this.crossingEEPunishment = crossingEEPunishment;
     }
 
-    public double getPreferredLength() {
-        return preferredLength;
+    public double getCrossingEVPunishment() {
+        return crossingEVPunishment;
     }
 
-    public void setPreferredLength(double preferredLength) {
-        this.preferredLength = preferredLength;
+    public void setCrossingEVPunishment(double crossingEVPunishment) {
+        this.crossingEVPunishment = crossingEVPunishment;
     }
 
+    public double getCrossingVVPunishment() {
+        return crossingVVPunishment;
+    }
+
+    public void setCrossingVVPunishment(double crossingVVPunishment) {
+        this.crossingVVPunishment = crossingVVPunishment;
+    }
 
     public double getVertexAnglesPunishment() {
         return vertexAnglesPunishment;
@@ -63,19 +73,19 @@ public class GraphQualityArguments {
         this.vertexAnglesPunishment = vertexAnglesPunishment;
     }
 
-    public double getVertexCrossingPunishment() {
-        return vertexCrossingPunishment;
-    }
-
-    public void setVertexCrossingPunishment(double vertexCrossingPunishment) {
-        this.vertexCrossingPunishment = vertexCrossingPunishment;
-    }
-
     public double getPreferredVertexRadius() {
         return preferredVertexRadius;
     }
 
     public void setPreferredVertexRadius(double preferredVertexRadius) {
         this.preferredVertexRadius = preferredVertexRadius;
+    }
+
+    public double getPreferredLength() {
+        return preferredLength;
+    }
+
+    public void setPreferredLength(double preferredLength) {
+        this.preferredLength = preferredLength;
     }
 }
