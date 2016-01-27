@@ -35,7 +35,7 @@ Pierwszym krokiem jest wygenerowanie populacji startowej. Generowana ona jest za
 
 
 ######Selekcja
-Drugim krokiem jest selekcja. Zastosowana została selekcja turniejowa. 
+Drugim krokiem jest selekcja. Zastosowana została selekcja turniejowa.
 Jej przebieg jest następujący: n razy, gdzie n to rozmiar populacji, następuje losowanie dwóch osobników z niej z rozkładem jednostajnym.
 Między osobnikami odbywa się turniej - tj. lepszy z nich przedostaje się do nowej populacji.
 
@@ -58,17 +58,23 @@ Z prawdopodobieństwem zadanym w aplikacji wierzchołek podlega następującej o
 Do współrzędnej dodawany jest mały jitter uzyskany za pomocą zmiennej o rozkładzie normalnym o wariancji proporcjonalnej do rozmiarów okna.
 
 
-######Funkcja fitness
+###### Funkcja fitness
+Wartość funkcji fitness dla danego osobnika mówi, jak *ładny* jest to graf. Wartość ta jest obliczana jako suma wartości wprowadzonych przez użytkownika współczynników pomnożonych przez *jakość* odpowiadającego mu parametru. Jakość jest obliczana funkcją *F(x) = 1/(1+x)*, gdzie *x* to wielkość przewinienia dla danego parametru.
 
-TODO Konrad - opis funkcji, jakie obliczenia bierze pod uwagę.
+Pod uwagę brane są takie czynniki jak liczba przecięć, kąty, długości odcinków.
 
 
 
 
 ####Opis przeprowadzonych testów:
 
-Testy przeprowadzone zostały głównie na grafach o strukturze grid.
-TODO Tomek - jakieś przykłady, wspomnij generator.
+Testy zostały wykonane na grafach generowanych w generatorze znajdującym się w pakiecie.
+Generator tworzył grafy o podanej liczbie wierzchołków oraz prawdopodobieństwie połączenia dwóch wierzchołków krawędzią.
+Testy polegały na podaniu odpowiednich współczynników w czasie działania programu a następnie porównania wyświetlonego
+w okienku grafu z wynikami (wartościami kar oraz wystąpieniami konkretnych zdarzeń np. przecięć krawędzi) wyświetlanymi
+w konsoli.
+
+
 
 #### Sposób budowania i uruchomienia:
 Projekt budowany jest za pomocą narzędzia maven. Wszystkie używane biblioteki wyspecyfikowane są w pliku pom.xml.
@@ -76,7 +82,16 @@ Głównym plikiem programu jest GraphMain.java, który odpowiada za wyświetleni
 Wyświetlanie odbywa się za pomocą generowania pliku SVG na podstawie wewnętrznej struktury grafu w programie.
 
 
-####Opis  parametrów:
+#### Opis  parametrów:
+|Parametr|Przewinienie|
+|--------|------------|
+|Przecięcie krawędź-krawędź|Liczba przecięć|
+|Przecięcie krawędź-wierzchołek|Liczba par (V,E), gdzie V jest rysowane na E, ale V nie jest żadnym z końców E|
+|Przecięcie wierzchołek-wierzchołek|Liczba par (V1,V2) takich, że V1 jest rysowane na V2|
+|Odchylenie od zadanej przez użytkownika długości krawędzi|Suma wariancji krawędzi w stosunku do zadanej przez uzytkownika wartości podzielona przez iloczyn tej wartości z liczbą krawędzi|
+
+
+
 
 #####Modyfikowalne:
 * promień wierzchołka
@@ -96,7 +111,18 @@ Wyświetlanie odbywa się za pomocą generowania pliku SVG na podstawie wewnętr
 
 ####Opis mocnych i słabych stron projektu:
 
-TODO Tomek.
+Słabe strony:
+Nie ma żadnych liczbowych kryteriów "ładności", utrudnia to przeprowadzanie testów oraz wybór parametrów a także
+ustalenie poziomu dopasowania wymaganego przez użytkownika.
+Przy grafach spełniających założenia w małym stopniu (dużo przecięć krawędzi np. graf pełny) sprawdzenie czy wynik jest
+zadowalający.
+Ponadto problem widzimy z przecięciami i funkcją fitness - w tej chwili w wielu miejscach może być tak, że jest ona nie ciągła, a bardzo schodkowa, ponieważ
+bierzemy pod uwagę liczbę przecięć, co jest wartością dyskretną. Dobrym pomysłem mogłoby być skalowanie jakiejś odległości między krawędziami, jednakże doszliśmy do wniosku, że byłoby to zbyt ciężkie do wykonania.
+
+
+Mocne strony:
+Dla algorytmu nie ma znaczenia rodzaj grafu.
+Ewolucja działa całkiem dobrze i przy dość prostym grafie jest w stanie rysować go w sposób przyzwoity tj. bez przecięć i dość rozrzuconego po camvasie.
 
 
 ####Podział pracy:

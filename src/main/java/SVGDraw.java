@@ -3,6 +3,7 @@ import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+
 import org.apache.batik.swing.JSVGCanvas;
 import org.apache.batik.swing.svg.JSVGComponent;
 import org.apache.batik.transcoder.svg2svg.SVGTranscoder;
@@ -13,6 +14,7 @@ import org.w3c.dom.DOMImplementation;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.transcoder.*;
 import org.apache.batik.transcoder.image.*;
+
 import javax.xml.transform.dom.*;
 import javax.xml.transform.sax.*;
 import javax.xml.transform.*;
@@ -64,7 +66,7 @@ public class SVGDraw {
         });
         int dx = 5;
         int dy = 35;
-        f.setSize(width+dx, height+dy);
+        f.setSize(width + dx, height + dy);
         f.setVisible(true);
         svgCanvas.setSize(panel.getSize());
         svgCanvas.setDocumentState(JSVGComponent.ALWAYS_DYNAMIC);
@@ -94,34 +96,33 @@ public class SVGDraw {
         return Double.toString(i);
     }
 
-    public Element circle(double cx,double cy, double radius) {
+    public Element circle(double cx, double cy, double radius) {
         Element circle = doc.createElementNS(svgNS, "circle");
         circle.setAttributeNS(null, "cx", q(cx));
         circle.setAttributeNS(null, "cy", q(cy));
         circle.setAttributeNS(null, "r", q(radius));
-        circle.setAttributeNS(null, "style", "fill:"+circleColor);
+        circle.setAttributeNS(null, "style", "fill:" + circleColor);
         return circle;
     }
 
-    public Element line(double x1,double y1, double x2, double y2) {
+    public Element line(double x1, double y1, double x2, double y2) {
         Element line = doc.createElementNS(svgNS, "line");
         line.setAttributeNS(null, "x1", q(x1));
         line.setAttributeNS(null, "y1", q(y1));
         line.setAttributeNS(null, "x2", q(x2));
         line.setAttributeNS(null, "y2", q(y2));
-        line.setAttributeNS(null, "style", "stroke-width:"+q(strokeWidth)+"; stroke:"+lineColor);
+        line.setAttributeNS(null, "style", "stroke-width:" + q(strokeWidth) + "; stroke:" + lineColor);
         return line;
     }
 
     public Element textCentered(double x, double y, double size, String t) {
         Element text = doc.createElementNS(svgNS, "text");
         text.setAttributeNS(null, "x", q(x));
-        text.setAttributeNS(null, "y", q(y+size/3.));
+        text.setAttributeNS(null, "y", q(y + size / 3.));
         text.setAttributeNS(null, "style",
-                "text-anchor: middle; fill:black; stroke:none; font-size: "+size+"px");
+                "text-anchor: middle; fill:black; stroke:none; font-size: " + size + "px");
         Text message = doc.createTextNode(t);
         text.appendChild(message);
         return text;
     }
-
 }

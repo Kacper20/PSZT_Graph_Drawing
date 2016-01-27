@@ -9,10 +9,7 @@ import java.io.IOException;
  * Created by kacper on 30.12.2015.
  */
 public class GraphMain {
-
-
     public static void main(String[] args) throws IOException {
-
         MainWindow w = new MainWindow();
 
         PSZTGraphGenerator graphGenerator = new PSZTGraphGenerator(0.4, 8);
@@ -34,6 +31,9 @@ public class GraphMain {
     }
 
     public static void testTriangle (){
-
+//        PSZTGraphGenerator graphGenerator = new PSZTGraphGenerator(0.5, 20);
+//
+//        PSZTGraph ourGraph = graphGenerator.generateGraph();
+//        w.setPsztGraph(ourGraph);
     }
 }

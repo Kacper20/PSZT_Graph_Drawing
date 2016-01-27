@@ -1,7 +1,7 @@
 /**
  * Created by kacper on 11.01.2016.
  */
-public class PSZTVertex implements Cloneable{
+public class PSZTVertex implements Cloneable {
     private String id;
     private Double x;
     private Double y;
@@ -38,10 +38,8 @@ public class PSZTVertex implements Cloneable{
 
     @Override
     protected Object clone() {
-
-        Double newX = x != null ? Double.valueOf(x) : null;
-        Double newY = y != null ? Double.valueOf(y) : null;
-
-        return new PSZTVertex(id,newX,newY);
+        Double newX = x != null ? x : null;
+        Double newY = y != null ? y : null;
+        return new PSZTVertex(id, newX, newY);
     }
 }

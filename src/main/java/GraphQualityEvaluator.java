@@ -1,12 +1,13 @@
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.List;
 
 /**
  * Created by kacper on 30.12.2015.
  */
 public class GraphQualityEvaluator {
-
     private GraphQualityArguments arguments;
 
     public GraphQualityEvaluator(GraphQualityArguments arguments) {
@@ -14,21 +15,43 @@ public class GraphQualityEvaluator {
     }
 
     public double qualityOfGraph(PSZTGraph graph) {
-        double crossingCumulativePunishment =
-                arguments.getCrossingPunishment() *
-                        ( 1. / (numberOfCrossings(graph) +
-                                numberOfVerticesWithVerticesCrossings(graph) +
-                                numberOfVerticesWithEdgesCrossings(graph) +
-                                1.));
-        double lengthCumulativePunishment = (Double) arguments.getLengthPunishment() * (1. / (relativeErrorOfEdgeLengths(graph) + 1.));
-        double anglesCumulativePunishment = (Double) arguments.getVertexAnglesPunishment() * (1. / (edgeAnglesDeviation(graph) + 1.));
+        double crossingEECumulativePunishmentVal = arguments.getCrossingEEPunishment() * crossingEECumulativePunishment(graph);
 
-        return crossingCumulativePunishment + lengthCumulativePunishment + anglesCumulativePunishment;
+        double crossingVVCumulativePunishmentVal = arguments.getCrossingVVPunishment() * crossingVVCumulativePunishment(graph);
+        double crossingVECumulativePunishmentVal = arguments.getCrossingEVPunishment() * crossingVECumulativePunishment(graph);
+        double lengthCumulativePunishmentVal = arguments.getLengthPunishment() * lengthCumulativePunishment(graph);
+        double anglesCumulativePunishmentVal = arguments.getVertexAnglesPunishment() * anglesCumulativePunishment(graph);
+
+        return crossingEECumulativePunishmentVal +
+                crossingVVCumulativePunishmentVal +
+                crossingVECumulativePunishmentVal +
+                lengthCumulativePunishmentVal +
+                anglesCumulativePunishmentVal;
+    }
+
+    public double crossingEECumulativePunishment(PSZTGraph graph) {
+        return (1. / (numberOfCrossings(graph) + 1.));
+    }
+
+    public double crossingVVCumulativePunishment(PSZTGraph graph) {
+        return (1. / (1. + numberOfVerticesWithVerticesCrossings(graph)));
+    }
+
+    public double crossingVECumulativePunishment(PSZTGraph graph) {
+        return (1. / (1. + (numberOfVerticesWithEdgesCrossings(graph))));
+    }
+
+    public double lengthCumulativePunishment(PSZTGraph graph) {
+        return (1. / (1. + relativeErrorOfEdgeLengths(graph)));//(Math.exp(-.3 * relativeErrorOfEdgeLengths(graph)));
+    }
+
+    public double anglesCumulativePunishment(PSZTGraph graph) {
+        return (1. / (edgeAnglesDeviation(graph) + 1.));
     }
 
     private double edgeAnglesDeviation(PSZTGraph graph) {
         double value = 0;
-        for (PSZTVertex vertex: graph.getVertices()) {
+        for (PSZTVertex vertex : graph.getVertices()) {
             List<PSZTEdge> edges = graph.incidentToVertex(vertex);
 
             for (int i = 0; i < edges.size(); i++) {
@@ -40,7 +63,7 @@ public class GraphQualityEvaluator {
                     Line2D.Double secondLine = new Line2D.Double(second.getFrom().getX(), second.getFrom().getY(), second.getTo().getX(), second.getTo().getY());
 
                     double angle = angleBetween2Lines(firstLine, secondLine);
-                    double val = 2 * Math.PI / (double)edges.size();
+                    double val = 2 * Math.PI / (double) edges.size();
                     value += Math.pow(angle - val, 2);
                 }
             }
@@ -51,16 +74,17 @@ public class GraphQualityEvaluator {
 
     public int numberOfVerticesWithEdgesCrossings(PSZTGraph graph) {
         int sum = 0;
-        for(PSZTVertex vertex: graph.getVertices()) {
-            for(PSZTEdge edge: graph.getEdges()) {
+        for (PSZTVertex vertex : graph.getVertices()) {
+            for (PSZTEdge edge : graph.getEdges()) {
                 //If edge is indicent to the vertex, let's continue
-                if (edge.getTo() == vertex || edge.getFrom() == vertex) { continue; }
+                if (edge.getTo() == vertex || edge.getFrom() == vertex) {
+                    continue;
+                }
                 double distance = vertexToEdgeDistance(vertex, edge);
-
-                //We're making sure, that we have some space between line and vertex circle
-                double distancePlusThreshold = arguments.getPreferredVertexRadius();// + arguments.getPreferredLength() * 0.05;
-
-                if ( distance <= distancePlusThreshold) { sum += 1; }
+                double distancePlusThreshold = 1.1 * arguments.getPreferredVertexRadius();
+                if (distance <= distancePlusThreshold) {
+                    sum += 1;
+                }
             }
         }
 
@@ -72,26 +96,25 @@ public class GraphQualityEvaluator {
         for (PSZTVertex v1 : graph.getVertices()) {
             for (PSZTVertex v2 : graph.getVertices()) {
                 if (v1 == v2) continue;
-                if (vertexToVertexDistance(v1,v2) < 2.*arguments.getPreferredVertexRadius()) sum++;
+                if (vertexToVertexDistance(v1, v2) < 2. * arguments.getPreferredVertexRadius()) sum++;
             }
         }
-        return sum/2;   // because each crossing counted twice
+        return sum / 2;   // because each crossing counted twice
     }
 
-    private double relativeErrorOfEdgeLengths(PSZTGraph graph) {
+    public double relativeErrorOfEdgeLengths(PSZTGraph graph) {
         List<PSZTEdge> edges = graph.getEdges();
 
         double numberOfEdges = edges.size();
-
         double sum = 0;
 
-        for (PSZTEdge edge: edges) {
+        for (PSZTEdge edge : edges) {
             double edgeLength = (new PVector(edge.getFrom().getX(), edge.getFrom().getY()).dist(new PVector(edge.getTo().getX(), edge.getTo().getY())));
             double difference = (edgeLength - arguments.getPreferredLength()) / arguments.getPreferredLength();
             sum += difference * difference;
         }
 
-        return sum;
+        return sum / numberOfEdges / arguments.getPreferredLength();
     }
 
     public int numberOfCrossings(PSZTGraph graph) {
@@ -114,38 +137,33 @@ public class GraphQualityEvaluator {
                 if (Line2D.linesIntersect(
                         v1f.getX(), v1f.getY(), v1t.getX(), v1t.getY(),
                         v2f.getX(), v2f.getY(), v2t.getX(), v2t.getY()
-                        )) numberOfCrossingEdges++;
+                )) numberOfCrossingEdges++;
             }
         }
         return numberOfCrossingEdges;
     }
 
-    private static double angleBetween2Lines(Line2D line1, Line2D line2)
-    {
+    private static double angleBetween2Lines(Line2D line1, Line2D line2) {
         double angle1 = Math.atan2(line1.getY1() - line1.getY2(),
                 line1.getX1() - line1.getX2());
         double angle2 = Math.atan2(line2.getY1() - line2.getY2(),
                 line2.getX1() - line2.getX2());
-        return angle1-angle2;
+        return angle1 - angle2;
     }
 
-
-
-
     private static double vertexToVertexDistance(PSZTVertex v1, PSZTVertex v2) {
-        return Math.sqrt(vertexToVertexDistanceSquared(v1,v2));
+        return Math.sqrt(vertexToVertexDistanceSquared(v1, v2));
     }
 
     private static double vertexToEdgeDistance(PSZTVertex p, PSZTEdge e) {
         PSZTVertex v = e.getFrom();
         PSZTVertex w = e.getTo();
 
-        if (v==w) return vertexToVertexDistance(p, v);  // loop edge, maybe not necessary
+        if (v == w) return vertexToVertexDistance(p, v);  // loop edge, maybe not necessary
 
         // Consider the line extending the segment, parameterized as v + t (w - v).
         // We find projection of point p onto the line.
-        // It falls where t = [(p-v) . (w-v)] / |w-v|^2
-        double t = dotProduct(v, p, v, w) / vertexToVertexDistanceSquared(v, w);
+        double t = dotProduct(v, p, v, w) / vertexToVertexDistance(v, p) / vertexToVertexDistance(v, w);//vertexToVertexDistanceSquared(v, w);
         if (t < 0.0) return vertexToVertexDistance(p, v);       // Beyond the 'v' end of the segment
         else if (t > 1.0) return vertexToVertexDistance(p, w);  // Beyond the 'w' end of the segment
         // else use library method:
@@ -168,13 +186,13 @@ public class GraphQualityEvaluator {
         double v1y = b.getY() - a.getY();
         double v2x = d.getX() - c.getX();
         double v2y = d.getY() - c.getY();
-        return v1x*v2x + v1y*v2y;
+        return v1x * v2x + v1y * v2y;
     }
 
-    private static double vertexToVertexDistanceSquared(PSZTVertex v1, PSZTVertex v2){
+    private static double vertexToVertexDistanceSquared(PSZTVertex v1, PSZTVertex v2) {
         double dx = v1.getX() - v2.getX();
         double dy = v1.getY() - v2.getY();
-        return dx*dx+dy*dy;
+        return dx * dx + dy * dy;
     }
 
 }

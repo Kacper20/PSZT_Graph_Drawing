@@ -20,11 +20,7 @@ Class that takes care of sampling proper point.
 
 public class CanvasDistribution {
 
-
-    
     private NormalDistribution distribution;
-
-
 
     private double height;
     private double width;
@@ -41,20 +37,16 @@ public class CanvasDistribution {
 
         Double value;
         value = distribution.sample();
-        if (point == WhichPoint.X && value > (width - radius))  {
-                double diff = value - (width -  radius);
-                value = width - radius - diff;
-        }
-        else if (point == WhichPoint.Y && value > (height - radius)) {
-                double diff = value - (height - radius);
-                value = height- radius - diff;
-        }
-        else if (value < radius) {
+        if (point == WhichPoint.X && value > (width - radius)) {
+            double diff = value - (width - radius);
+            value = width - radius - diff;
+        } else if (point == WhichPoint.Y && value > (height - radius)) {
+            double diff = value - (height - radius);
+            value = height - radius - diff;
+        } else if (value < radius) {
             double diff = radius - value;
             value = radius + diff;
         }
-
-
 
 
         if (point == WhichPoint.X) {
@@ -63,10 +55,10 @@ public class CanvasDistribution {
         }
         if (point == WhichPoint.Y) {
 
-            assert (value  <= (height - radius));
+            assert (value <= (height - radius));
         }
 
-        assert(value >= radius);
+        assert (value >= radius);
 
 
         return value;
