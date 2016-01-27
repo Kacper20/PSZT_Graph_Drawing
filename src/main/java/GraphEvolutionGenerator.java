@@ -186,7 +186,7 @@ public class GraphEvolutionGenerator {
             double sumY = 0;
 
             for (int j = 0; j < reproductedPopulation.size(); j++) {
-                PSZTGraph graph = reproductedPopulation.get(i);
+                PSZTGraph graph = reproductedPopulation.get(j);
                 PSZTVertex vertex = graph.getVertices().get(i);
                 sumX += vertex.getX();
                 sumY += vertex.getY();
