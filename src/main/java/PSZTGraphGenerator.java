@@ -18,7 +18,7 @@ public class PSZTGraphGenerator {
     public PSZTGraph generateGraph()
     {
         UniformRealDistribution uniformRealDistribution = new UniformRealDistribution(0.0, 1.0);
-        java.util.List<PSZTVertex> vertices = new ArrayList<>();
+        List<PSZTVertex> vertices = new ArrayList<>();
         List<PSZTEdge> edges = new ArrayList<>();
 
         int i = 0;

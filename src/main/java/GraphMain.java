@@ -18,17 +18,17 @@ public class GraphMain {
         PSZTGraphGenerator graphGenerator = new PSZTGraphGenerator(0.5, 8);
 
 
-        try {
-            Graph graphToDraw = TinkerGraph.open();
-            graphToDraw.io(IoCore.graphml()).readGraph("converted.xml");
+//        try {
+//            Graph graphToDraw = TinkerGraph.open();
+//            graphToDraw.io(IoCore.graphml()).readGraph("converted.xml");
             PSZTGraph ourGraph = graphGenerator.generateGraph();
 //            PSZTGraph ourGraph = new PSZTGraph(graphToDraw);
 
             w.setPsztGraph(ourGraph);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
     }
 

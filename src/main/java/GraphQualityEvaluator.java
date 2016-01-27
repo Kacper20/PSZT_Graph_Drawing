@@ -38,11 +38,11 @@ public class GraphQualityEvaluator {
         return (1./ (1. + numberOfVerticesWithVerticesCrossings(graph)));
     }
     public double crossingVECumulativePunishment (PSZTGraph graph) {
-        return (Math.exp(-numberOfVerticesWithEdgesCrossings(graph)));
+        return (1./ (1. + (numberOfVerticesWithEdgesCrossings(graph))));
     }
     //        double lengthCumulativePunishment = (Double) arguments.getLengthPunishment() * (1. / (relativeErrorOfEdgeLengths(graph) + 1.));
     public double lengthCumulativePunishment(PSZTGraph graph) {
-        return (Math.exp(-.3 * relativeErrorOfEdgeLengths(graph)));
+        return (1./ (1. + relativeErrorOfEdgeLengths(graph)));//(Math.exp(-.3 * relativeErrorOfEdgeLengths(graph)));
     }
     public double anglesCumulativePunishment(PSZTGraph graph) {
         return (1. / (edgeAnglesDeviation(graph) + 1.));
@@ -167,7 +167,7 @@ public class GraphQualityEvaluator {
         // Consider the line extending the segment, parameterized as v + t (w - v).
         // We find projection of point p onto the line.
         // It falls where t = [(p-v) . (w-v)] / |w-v|^2
-        double t = dotProduct(v, p, v, w) / vertexToVertexDistanceSquared(v, w);
+        double t = dotProduct(v, p, v, w) / vertexToVertexDistance(v,p) / vertexToVertexDistance(v,w);//vertexToVertexDistanceSquared(v, w);
         if (t < 0.0) return vertexToVertexDistance(p, v);       // Beyond the 'v' end of the segment
         else if (t > 1.0) return vertexToVertexDistance(p, w);  // Beyond the 'w' end of the segment
         // else use library method:
