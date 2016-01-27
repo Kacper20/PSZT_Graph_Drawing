@@ -217,8 +217,8 @@ public class GraphEvolutionGenerator {
         for (PSZTGraph graph : population) {
             for (PSZTVertex v : graph.getVertices()) {
 
-                double xVariance = (1.0 / 30.0) * (canvasWidth - 2 * vertexRadius);
-                double yVariance = (1.0 / 30.0) * (canvasHeight - 2 * vertexRadius);
+                double xVariance = (1.0 / 100.0) * (canvasWidth - 2 * vertexRadius);
+                double yVariance = (1.0 / 100.0) * (canvasHeight - 2 * vertexRadius);
                 CanvasDistribution distributionX = new CanvasDistribution(canvasHeight, canvasWidth, vertexRadius, new NormalDistribution(v.getX(), xVariance) );
                 CanvasDistribution distributionY = new CanvasDistribution(canvasHeight, canvasWidth, vertexRadius, new NormalDistribution(v.getY(), yVariance) );
                 v.setX(distributionX.getValidSample(WhichPoint.X));

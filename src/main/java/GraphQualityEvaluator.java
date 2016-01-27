@@ -14,19 +14,16 @@ public class GraphQualityEvaluator {
     }
 
     public double qualityOfGraph(PSZTGraph graph) {
-        double crossingEECumulativePunishment =
-                arguments.getCrossingPunishment() * ( 1. / (numberOfCrossings(graph) + 1.));
-
-        double crossingVVCumulativePunishment = arguments.getVertexCrossingPunishment() * (1./ (1. + numberOfVerticesWithVerticesCrossings(graph)));
-        double crossingVECumulativePunishment = arguments.getVertexCrossingPunishment() * (1./ (1. + numberOfVerticesWithEdgesCrossings(graph)));
+        double crossingCumulativePunishment =
+                arguments.getCrossingPunishment() *
+                        ( 1. / (numberOfCrossings(graph) +
+                                numberOfVerticesWithVerticesCrossings(graph) +
+                                numberOfVerticesWithEdgesCrossings(graph) +
+                                1.));
         double lengthCumulativePunishment = (Double) arguments.getLengthPunishment() * (1. / (relativeErrorOfEdgeLengths(graph) + 1.));
         double anglesCumulativePunishment = (Double) arguments.getVertexAnglesPunishment() * (1. / (edgeAnglesDeviation(graph) + 1.));
 
-        return crossingEECumulativePunishment +
-                crossingVVCumulativePunishment +
-                crossingVECumulativePunishment +
-                lengthCumulativePunishment +
-                anglesCumulativePunishment;
+        return crossingCumulativePunishment + lengthCumulativePunishment + anglesCumulativePunishment;
     }
 
     private double edgeAnglesDeviation(PSZTGraph graph) {

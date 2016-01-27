@@ -10,8 +10,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Arc2D;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 
 /**
@@ -24,20 +26,24 @@ public class MainWindow {
                                     "lengthPunishment", "crossingPunishment", "vertexCrossingPunishment", "vertexAnglesPunishment"};
     private Double[] defaultValues = {30.0,100.0,800.0,600.0, 400.0, 5.0, 1.0, 1.0, 3.0, 1.4, 0.7, 0.4, 2.0};
     private JFrame window;
-    private JButton setValuesButton;
-    private JButton clearButton;
-
+    private JButton startStopButton;
+    private JButton resetButton;
+    private JButton exportButton;
     private JLabel[] labels;
     private JTextField[] params;
-    private JButton stopButton;
+
     private JPanel panel;
     private JSVGCanvas svgCanvas;
     private JLabel fitness;
     private JLabel population;
     private PSZTGraph ourGraph;
-
+    private GraphQualityArguments arguments;
+    private GraphEvolutionGenerator generator;
     private org.javatuples.Pair<PSZTGraph, Double> bestGraph;
-
+    private long timeLimit;
+    private int visibilityFieldWidth;
+    private int getVisibilityFieldHeight;
+    private double radius;
 //    void testowaMetoda() throws FileNotFoundException {
 //        PSZTGraphToSVGConverter converter = new PSZTGraphToSVGConverter(bestGraph.getValue0(), map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), map.get("Radius"));
 //        converter.doTheMagic();
@@ -101,6 +107,7 @@ public class MainWindow {
             boolean isRunning;
             public void run()
             {
+
                 isRunning = false;
                 window = new JFrame("PSZT_Algorytm_Ewolucyjny");
                 window.setSize(800, 800);
@@ -108,44 +115,35 @@ public class MainWindow {
                 window.setLayout(new GridBagLayout());
                 // SVG do wyswietlenia w oknie
                 svgCanvas = new JSVGCanvas();
-                stopButton = new JButton("Stop");
-                setValuesButton = new JButton("Set Values");
-                clearButton = new JButton("Clear");
 
-                setValuesButton.addActionListener((new ActionListener()
-                {
-                    MainWindow m;
-                    public void actionPerformed(ActionEvent e)
-                    {
+                startStopButton = new JButton("Start");
+                resetButton = new JButton("Reset");
+                exportButton = new JButton("Export");
+                exportButton.setEnabled(false);
+
+                startStopButton.addActionListener(e -> {
+                    if(((JButton)(e.getSource())).getText() == "Start") {
+                        ((JButton)(e.getSource())).setText("Stop");
                         HashMap<String, Double> values = new HashMap<String, Double>();
-
                         for (int i = 0; i < m.getLabelStrings().length; i++) {
-                            if(!m.getParams()[i].getText().equals(""))
+                            if (!m.getParams()[i].getText().equals(""))
                                 values.put(getLabelStrings()[i], Double.parseDouble(getParams()[i].getText()));
                             else
                                 values.put(getLabelStrings()[i], defaultValues[i]);
-
-                        }
-                        if(isRunning)
-                        {
-                            worker.setRun(false);
-                            worker.cancel(true);
                         }
 
                         worker = new PSZTWorker(m, values);
-
                         worker.execute();
-                        isRunning = true;
-//                        System.out.println("click");
-
-
+                        exportButton.setEnabled(false);
                     }
-                    public ActionListener init(MainWindow mm)
+                    else
                     {
-                        m = mm;
-                        return this;
+                        ((JButton)(e.getSource())).setText("Start");
+                        worker.setRun(false);
+                        exportButton.setEnabled(true);
                     }
-                }).init(m));
+
+                });
                 params = new JTextField[labelStrings.length];
                 labels = new JLabel[labelStrings.length];
                 for(int i = 0; i < labelStrings.length; i++)
@@ -155,36 +153,48 @@ public class MainWindow {
 
                 }
 
-                clearButton.addActionListener((new ActionListener() {
+                resetButton.addActionListener(e -> {
+                    arguments = null;
+                    generator = null;
+                    bestGraph = null;
+                });
+
+
+
+                exportButton.addActionListener(new ActionListener() {
+
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        for(JTextField t : m.getParams())
-                        {
-                            t.setText("");
+                        JFileChooser fc = new JFileChooser();
+                        File file;
+                        int returnVal = fc.showOpenDialog(new JFrame());
+                        if (returnVal == JFileChooser.APPROVE_OPTION) {
+
+                            file = fc.getSelectedFile();
+                            System.out.println(file.getAbsolutePath());
+                            PSZTGraphToSVGConverter converter = new PSZTGraphToSVGConverter(bestGraph.getValue0(), visibilityFieldWidth, getVisibilityFieldHeight, radius);
+                            converter.doTheMagic();
+
+                            if(!file.exists()) {
+                                try {
+                                    file.createNewFile();
+                                } catch (IOException e1) {
+                                    e1.printStackTrace();
+                                }
+                            }
+                            try {
+                                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                                converter.getSvgDraw().toSVG(fileOutputStream);
+                            } catch (FileNotFoundException e1) {
+                                e1.printStackTrace();
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
+
                         }
-                    }
-                    public ActionListener init(MainWindow mm)
-                    {
-                        m = mm;
-                        return this;
-                    }
-                }).init(m));
-
-                stopButton.addActionListener(new ActionListener() {
-                    MainWindow m;
-                    @Override
-
-                    public void actionPerformed(ActionEvent e) {
-                        worker.cancel(true);
-                        worker.setRun(false);
 
                     }
-                    public ActionListener init(MainWindow mm)
-                    {
-                        m = mm;
-                        return this;
-                    }
-                }.init(m));
+                });
                 fitness = new JLabel("Fitness:");
                 population = new JLabel("Population:");
                 panel = new JPanel();
@@ -210,11 +220,11 @@ public class MainWindow {
                 }
 
                 this.setConstrainst(c, 1, labels.length/2 + 1, 1, 1, 0, 0, 1, 1, GridBagConstraints.NONE);
-                window.getContentPane().add(setValuesButton, c);
+                window.getContentPane().add(startStopButton, c);
                 this.setConstrainst(c, 2, labels.length/2 +1 , 1, 1, 0, 0, 1, 1, GridBagConstraints.NONE);
-                window.getContentPane().add(clearButton, c);
+                window.getContentPane().add(resetButton, c);
                 this.setConstrainst(c, 3, labels.length/2 +1 , 1, 1, 0, 0, 1, 1, GridBagConstraints.NONE);
-                window.getContentPane().add(stopButton, c);
+                window.getContentPane().add(exportButton, c);
                 this.setConstrainst(c, 4, labels.length/2 +1 , 1, 1, 0, 0, 1, 1, GridBagConstraints.NONE);
                 window.getContentPane().add(fitness, c);
                 this.setConstrainst(c, 5, labels.length/2 +1 , 1, 1, 0, 0, 1, 1, GridBagConstraints.NONE);
@@ -264,16 +274,20 @@ public class MainWindow {
     }
 
     public void startGraphsGeneration(HashMap<String, Double> map, PSZTWorker worker) {
-        GraphQualityArguments arguments = new GraphQualityArguments(map.get("distance punishment"), map.get("lengthPunishment"), map.get("lengthPunishment"), map.get("vertexCrossingPunishment"), map.get("vertexAnglesPunishment"), map.get("Edge Length"), map.get("Radius"));
+        if(arguments == null) arguments = new GraphQualityArguments(map.get("distance punishment"), map.get("lengthPunishment"), map.get("lengthPunishment"), map.get("vertexCrossingPunishment"), map.get("vertexAnglesPunishment"), map.get("Edge Length"), map.get("Radius"));
 
-        GraphEvolutionGenerator generator = new GraphEvolutionGenerator(ourGraph,arguments, map.get("Population Size").intValue(), map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), map.get("Radius"), 1);
-        org.javatuples.Pair<PSZTGraph, Double> bestGraphFromCurrentPopulation = generator.getBestGraphFromCurrentPopulation();
-        bestGraph = new org.javatuples.Pair<>((PSZTGraph) bestGraphFromCurrentPopulation.getValue0().clone(), bestGraphFromCurrentPopulation.getValue1());
-
+        if(generator == null) generator = new GraphEvolutionGenerator(ourGraph,arguments, map.get("Population Size").intValue(), map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), map.get("Radius"), 1);
+        org.javatuples.Pair<PSZTGraph, Double> bestGraphFromCurrentPopulation;
+        if(bestGraph == null)
+        {
+            bestGraphFromCurrentPopulation = generator.getBestGraphFromCurrentPopulation();
+            bestGraph = new org.javatuples.Pair<>((PSZTGraph) bestGraphFromCurrentPopulation.getValue0().clone(), bestGraphFromCurrentPopulation.getValue1());
+        }
+        System.out.println("GOWNO");
 
         while(worker.isRun())
         {
-            long timeLimit = map.get("Time Limit").longValue();
+            if(timeLimit == 0) timeLimit = map.get("Time Limit").longValue();
             long begin = System.currentTimeMillis();
             while(System.currentTimeMillis() - begin < timeLimit)
             {
@@ -297,7 +311,7 @@ public class MainWindow {
             svgCanvas.setSize(map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue());
             this.getSvgCanvas().setDocument(doc);
         }
-
+        //odszarzanie przycisku
 
 //            org.javatuples.Pair<PSZTGraph, Double> bestPair = generator.getBestGraphFromCurrentPopulation();
 //            bestPair.getValue0();
