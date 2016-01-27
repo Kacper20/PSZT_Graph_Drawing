@@ -11,13 +11,17 @@ import java.awt.geom.Point2D;
 enum WhichPoint {
     X, Y
 }
+
 /*
+
 Class that takes care of sampling proper point.
 
- */
+*/
+
 public class CanvasDistribution {
 
 
+    
     private NormalDistribution distribution;
 
 

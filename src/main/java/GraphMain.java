@@ -15,7 +15,7 @@ public class GraphMain {
 
         MainWindow w = new MainWindow();
 
-        PSZTGraphGenerator graphGenerator = new PSZTGraphGenerator(1., 5);
+        PSZTGraphGenerator graphGenerator = new PSZTGraphGenerator(0.4, 8);
 
 
         try {
@@ -23,6 +23,7 @@ public class GraphMain {
             graphToDraw.io(IoCore.graphml()).readGraph("converted.xml");
             PSZTGraph ourGraph = graphGenerator.generateGraph();
 //            PSZTGraph ourGraph = new PSZTGraph(graphToDraw);
+
 
             w.setPsztGraph(ourGraph);
 

@@ -62,6 +62,9 @@ Do współrzędnej dodawany jest mały jitter uzyskany za pomocą zmiennej o roz
 
 TODO Konrad - opis funkcji, jakie obliczenia bierze pod uwagę.
 
+
+
+
 ####Opis przeprowadzonych testów:
 
 Testy przeprowadzone zostały głównie na grafach o strukturze grid.
