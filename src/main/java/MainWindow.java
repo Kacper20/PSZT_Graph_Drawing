@@ -43,7 +43,7 @@ public class MainWindow {
 
     private long timeLimit;
     private int visibilityFieldWidth;
-    private int getVisibilityFieldHeight;
+    private int visibilityFieldHeight;
     private double radius;
 
     public void setPsztGraph(PSZTGraph psztGraph) {
@@ -114,6 +114,7 @@ public class MainWindow {
 
                 startStopButton = new JButton("Start");
                 resetButton = new JButton("Reset");
+                resetButton.setEnabled(false);
                 exportButton = new JButton("Export");
                 exportButton.setEnabled(false);
 
@@ -168,7 +169,7 @@ public class MainWindow {
 
                             file = fc.getSelectedFile();
                             System.out.println(file.getAbsolutePath());
-                            PSZTGraphToSVGConverter converter = new PSZTGraphToSVGConverter(bestGraph.getValue0(), visibilityFieldWidth, getVisibilityFieldHeight, radius);
+                            PSZTGraphToSVGConverter converter = new PSZTGraphToSVGConverter(bestGraph.getValue0(), visibilityFieldWidth, visibilityFieldHeight, radius);
                             converter.doTheMagic();
 
                             if(!file.exists()) {
@@ -272,7 +273,13 @@ public class MainWindow {
     public void startGraphsGeneration(HashMap<String, Double> map, PSZTWorker worker) {
         if(arguments == null) arguments = new GraphQualityArguments(map.get("distance punishment"), map.get("lengthPunishment"), map.get("lengthPunishment"), map.get("vertexCrossingPunishment"), map.get("vertexAnglesPunishment"), map.get("Edge Length"), map.get("Radius"));
 
-        if(generator == null) generator = new GraphEvolutionGenerator(ourGraph,arguments, map.get("Population Size").intValue(), map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), map.get("Radius"), 1);
+        if(generator == null){
+            generator = new GraphEvolutionGenerator(ourGraph,arguments, map.get("Population Size").intValue(), map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), map.get("Radius"), 1);
+            visibilityFieldWidth = map.get("Visibility Field Width").intValue();
+            visibilityFieldHeight = map.get("Visibility Field Height").intValue();
+            radius = map.get("Radius");
+
+        }
         org.javatuples.Pair<PSZTGraph, Double> bestGraphFromCurrentPopulation;
         if(bestGraph == null)
         {
