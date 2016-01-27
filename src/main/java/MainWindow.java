@@ -235,6 +235,10 @@ public class MainWindow {
         GraphQualityArguments arguments = new GraphQualityArguments(map.get("distance punishment"), map.get("lengthPunishment"), map.get("lengthPunishment"), map.get("vertexCrossingPunishment"), map.get("vertexAnglesPunishment"), map.get("Edge Length"), map.get("Radius"));
 
         GraphEvolutionGenerator generator = new GraphEvolutionGenerator(ourGraph,arguments, map.get("Population Size").intValue(), map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), map.get("Radius"), 1);
+        org.javatuples.Pair<PSZTGraph, Double> bestGraphFromCurrentPopulation = generator.getBestGraphFromCurrentPopulation();
+        org.javatuples.Pair<PSZTGraph, Double> bestGraph = new org.javatuples.Pair<>((PSZTGraph) bestGraphFromCurrentPopulation.getValue0().clone(), bestGraphFromCurrentPopulation.getValue1());
+
+
         while(worker.isRun())
         {
             long timeLimit = map.get("Time Limit").longValue();
@@ -242,8 +246,10 @@ public class MainWindow {
             while(System.currentTimeMillis() - begin < timeLimit)
             {
                 generator.generateNextPopulation();
+                bestGraphFromCurrentPopulation = generator.getBestGraphFromCurrentPopulation();
+                if (bestGraphFromCurrentPopulation.getValue1() > bestGraph.getValue1())
+                    bestGraph = new org.javatuples.Pair<>((PSZTGraph) bestGraphFromCurrentPopulation.getValue0().clone(), bestGraphFromCurrentPopulation.getValue1());
             }
-            org.javatuples.Pair<PSZTGraph, Double> bestGraph = generator.getBestGraphFromCurrentPopulation();
             System.out.println("yolo:"+bestGraph.getValue1());
 
             GraphQualityEvaluator evaluator = generator.getEvaluator();
