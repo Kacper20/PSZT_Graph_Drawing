@@ -23,7 +23,7 @@ public class MainWindow {
 
 
     private String[] labelStrings = {"Radius", "Edge Length", "Visibility Field Width", "Visibility Field Height", "Time Limit", "Population Size",
-                                    "lengthPunishment", "crossingEEPunishment", "crossingEVPunishment", "corssingVVPunishment", "vertexAnglesPunishment"};
+                                    "lengthPunishment", "crossingEEPunishment", "crossingEVPunishment", "crossingVVPunishment", "vertexAnglesPunishment"};
     private Double[] defaultValues = {30.0,100.0,800.0,600.0, 1000.0, 100.0, 2.0, 3.0, 5., 5., 1.};
     private JFrame window;
     private JButton startStopButton;
