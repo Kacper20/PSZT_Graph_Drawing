@@ -64,7 +64,13 @@ TODO Konrad - opis funkcji, jakie obliczenia bierze pod uwagę.
 
 ####Opis przeprowadzonych testów:
 
-Testy przeprowadzone zostały głównie na grafach o strukturze grid.
+Testy zostały wykonane na grafach generowanych w generatorze znajdującym się w pakiecie.
+Generator tworzył grafy o podanej liczbie wierzchołków oraz prawdopodobieństwie połączenia dwóch wierzchołków krawędzią.
+Testy polegały na podaniu odpowiednich współczynników w czasie działania programu a następnie porównania wyświetlonego
+w okienku grafu z wynikami (wartościami kar oraz wystąpieniami konkretnych zdarzeń np. przecięć krawędzi) wyświetlanymi
+w konsoli.
+
+
 TODO Tomek - jakieś przykłady, wspomnij generator.
 
 #### Sposób budowania i uruchomienia:
@@ -93,7 +99,7 @@ Wyświetlanie odbywa się za pomocą generowania pliku SVG na podstawie wewnętr
 
 ####Opis mocnych i słabych stron projektu:
 
-TODO Tomek.
+
 
 
 ####Podział pracy:
