@@ -10,6 +10,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Arc2D;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.HashMap;
 
 /**
@@ -33,6 +35,14 @@ public class MainWindow {
     private JLabel fitness;
     private JLabel population;
     private PSZTGraph ourGraph;
+
+    private org.javatuples.Pair<PSZTGraph, Double> bestGraph;
+
+//    void testowaMetoda() throws FileNotFoundException {
+//        PSZTGraphToSVGConverter converter = new PSZTGraphToSVGConverter(bestGraph.getValue0(), map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), map.get("Radius"));
+//        converter.doTheMagic();
+//        converter.getSvgDraw().toSVG(new FileOutputStream("/path/to/file"));
+//    }
 
     public void setPsztGraph(PSZTGraph psztGraph) {
         this.ourGraph = psztGraph;
@@ -258,7 +268,7 @@ public class MainWindow {
 
         GraphEvolutionGenerator generator = new GraphEvolutionGenerator(ourGraph,arguments, map.get("Population Size").intValue(), map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), map.get("Radius"), 1);
         org.javatuples.Pair<PSZTGraph, Double> bestGraphFromCurrentPopulation = generator.getBestGraphFromCurrentPopulation();
-        org.javatuples.Pair<PSZTGraph, Double> bestGraph = new org.javatuples.Pair<>((PSZTGraph) bestGraphFromCurrentPopulation.getValue0().clone(), bestGraphFromCurrentPopulation.getValue1());
+        bestGraph = new org.javatuples.Pair<>((PSZTGraph) bestGraphFromCurrentPopulation.getValue0().clone(), bestGraphFromCurrentPopulation.getValue1());
 
 
         while(worker.isRun())
