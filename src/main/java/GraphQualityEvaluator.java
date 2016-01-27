@@ -15,10 +15,10 @@ public class GraphQualityEvaluator {
     }
 
     public double qualityOfGraph(PSZTGraph graph) {
-        double crossingEECumulativePunishmentVal = arguments.getCrossingPunishment() * crossingEECumulativePunishment(graph);
+        double crossingEECumulativePunishmentVal = arguments.getCrossingEEPunishment() * crossingEECumulativePunishment(graph);
 
-        double crossingVVCumulativePunishmentVal = arguments.getVertexCrossingPunishment() * crossingVVCumulativePunishment(graph);
-        double crossingVECumulativePunishmentVal = arguments.getVertexCrossingPunishment() * crossingVECumulativePunishment(graph);
+        double crossingVVCumulativePunishmentVal = arguments.getCrossingVVPunishment() * crossingVVCumulativePunishment(graph);
+        double crossingVECumulativePunishmentVal = arguments.getCrossingEVPunishment() * crossingVECumulativePunishment(graph);
         double lengthCumulativePunishmentVal = arguments.getLengthPunishment() * lengthCumulativePunishment(graph);
         double anglesCumulativePunishmentVal = arguments.getVertexAnglesPunishment() * anglesCumulativePunishment(graph);
 
