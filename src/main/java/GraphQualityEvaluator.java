@@ -1,5 +1,7 @@
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.List;
 
 /**
@@ -14,19 +16,36 @@ public class GraphQualityEvaluator {
     }
 
     public double qualityOfGraph(PSZTGraph graph) {
-        double crossingEECumulativePunishment =
-                arguments.getCrossingPunishment() * ( 1. / (numberOfCrossings(graph) + 1.));
+        double crossingEECumulativePunishmentVal = arguments.getCrossingPunishment() * crossingEECumulativePunishment(graph);
 
-        double crossingVVCumulativePunishment = arguments.getVertexCrossingPunishment() * (1./ (1. + numberOfVerticesWithVerticesCrossings(graph)));
-        double crossingVECumulativePunishment = arguments.getVertexCrossingPunishment() * (1./ (1. + numberOfVerticesWithEdgesCrossings(graph)));
-        double lengthCumulativePunishment = (Double) arguments.getLengthPunishment() * (1. / (relativeErrorOfEdgeLengths(graph) + 1.));
-        double anglesCumulativePunishment = (Double) arguments.getVertexAnglesPunishment() * (1. / (edgeAnglesDeviation(graph) + 1.));
+        double crossingVVCumulativePunishmentVal = arguments.getVertexCrossingPunishment() * crossingVVCumulativePunishment(graph);
+        double crossingVECumulativePunishmentVal = arguments.getVertexCrossingPunishment() * crossingVECumulativePunishment(graph);
+//        double lengthCumulativePunishment = (Double) arguments.getLengthPunishment() * (1. / (relativeErrorOfEdgeLengths(graph) + 1.));
+        double lengthCumulativePunishmentVal = arguments.getLengthPunishment() * lengthCumulativePunishment(graph);
+        double anglesCumulativePunishmentVal = arguments.getVertexAnglesPunishment() * anglesCumulativePunishment(graph);
 
-        return crossingEECumulativePunishment +
-                crossingVVCumulativePunishment +
-                crossingVECumulativePunishment +
-                lengthCumulativePunishment +
-                anglesCumulativePunishment;
+        return crossingEECumulativePunishmentVal +
+                crossingVVCumulativePunishmentVal +
+                crossingVECumulativePunishmentVal +
+                lengthCumulativePunishmentVal +
+                anglesCumulativePunishmentVal;
+    }
+    public double crossingEECumulativePunishment (PSZTGraph graph) {
+        return ( 1. / (numberOfCrossings(graph) + 1.));
+    }
+
+    public double crossingVVCumulativePunishment(PSZTGraph graph) {
+        return (1./ (1. + numberOfVerticesWithVerticesCrossings(graph)));
+    }
+    public double crossingVECumulativePunishment (PSZTGraph graph) {
+        return (Math.exp(-numberOfVerticesWithEdgesCrossings(graph)));
+    }
+    //        double lengthCumulativePunishment = (Double) arguments.getLengthPunishment() * (1. / (relativeErrorOfEdgeLengths(graph) + 1.));
+    public double lengthCumulativePunishment(PSZTGraph graph) {
+        return (Math.exp(-.3 * relativeErrorOfEdgeLengths(graph)));
+    }
+    public double anglesCumulativePunishment(PSZTGraph graph) {
+        return (1. / (edgeAnglesDeviation(graph) + 1.));
     }
 
     private double edgeAnglesDeviation(PSZTGraph graph) {
@@ -81,7 +100,7 @@ public class GraphQualityEvaluator {
         return sum/2;   // because each crossing counted twice
     }
 
-    private double relativeErrorOfEdgeLengths(PSZTGraph graph) {
+    public double relativeErrorOfEdgeLengths(PSZTGraph graph) {
         List<PSZTEdge> edges = graph.getEdges();
 
         double numberOfEdges = edges.size();
@@ -94,7 +113,7 @@ public class GraphQualityEvaluator {
             sum += difference * difference;
         }
 
-        return sum;
+        return sum / numberOfEdges / arguments.getPreferredLength();
     }
 
     public int numberOfCrossings(PSZTGraph graph) {

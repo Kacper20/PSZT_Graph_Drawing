@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.geom.Arc2D;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 
 /**
@@ -22,7 +23,7 @@ public class MainWindow {
 
     private String[] labelStrings = {"Radius", "Edge Length", "Visibility Field Width", "Visibility Field Height", "Time Limit", "Population Size", "distance punishment",
                                     "lengthPunishment", "crossingPunishment", "vertexCrossingPunishment", "vertexAnglesPunishment"};
-    private Double[] defaultValues = {30.0,100.0,800.0,600.0, 400.0, 5.0, 1.0, 1.0, 3.0, 1.4, 0.7, 0.4, 2.0};
+    private Double[] defaultValues = {30.0,100.0,800.0,600.0, 1000.0, 100.0, 1.0, 2.0, 3.0, 5., 1., 0.4, 2.0};
     private JFrame window;
     private JButton setValuesButton;
     private JButton clearButton;
@@ -37,12 +38,9 @@ public class MainWindow {
     private PSZTGraph ourGraph;
 
     private org.javatuples.Pair<PSZTGraph, Double> bestGraph;
+    private GraphQualityArguments arguments;
+    private GraphEvolutionGenerator generator;
 
-//    void testowaMetoda() throws FileNotFoundException {
-//        PSZTGraphToSVGConverter converter = new PSZTGraphToSVGConverter(bestGraph.getValue0(), map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), map.get("Radius"));
-//        converter.doTheMagic();
-//        converter.getSvgDraw().toSVG(new FileOutputStream("/path/to/file"));
-//    }
 
     public void setPsztGraph(PSZTGraph psztGraph) {
         this.ourGraph = psztGraph;
@@ -264,12 +262,15 @@ public class MainWindow {
     }
 
     public void startGraphsGeneration(HashMap<String, Double> map, PSZTWorker worker) {
-        GraphQualityArguments arguments = new GraphQualityArguments(map.get("distance punishment"), map.get("lengthPunishment"), map.get("lengthPunishment"), map.get("vertexCrossingPunishment"), map.get("vertexAnglesPunishment"), map.get("Edge Length"), map.get("Radius"));
+        arguments = new GraphQualityArguments(map.get("distance punishment"), map.get("lengthPunishment"), map.get("lengthPunishment"), map.get("vertexCrossingPunishment"), map.get("vertexAnglesPunishment"), map.get("Edge Length"), map.get("Radius"));
 
-        GraphEvolutionGenerator generator = new GraphEvolutionGenerator(ourGraph,arguments, map.get("Population Size").intValue(), map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), map.get("Radius"), 1);
-        org.javatuples.Pair<PSZTGraph, Double> bestGraphFromCurrentPopulation = generator.getBestGraphFromCurrentPopulation();
-        bestGraph = new org.javatuples.Pair<>((PSZTGraph) bestGraphFromCurrentPopulation.getValue0().clone(), bestGraphFromCurrentPopulation.getValue1());
+        generator = new GraphEvolutionGenerator(ourGraph,arguments, map.get("Population Size").intValue(), map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), map.get("Radius"), 1);
 
+        org.javatuples.Pair<PSZTGraph, Double> bestGraphFromCurrentPopulation;
+        if (bestGraph == null) {
+            bestGraphFromCurrentPopulation = generator.getBestGraphFromCurrentPopulation();
+            bestGraph = new org.javatuples.Pair<>((PSZTGraph) bestGraphFromCurrentPopulation.getValue0().clone(), bestGraphFromCurrentPopulation.getValue1());
+        }
 
         while(worker.isRun())
         {
@@ -285,12 +286,21 @@ public class MainWindow {
             System.out.println("yolo:"+bestGraph.getValue1());
 
             GraphQualityEvaluator evaluator = generator.getEvaluator();
-            System.out.println("Crossings EE: " + evaluator.numberOfCrossings(bestGraph.getValue0()));
-            System.out.println("Crossings EV: " + evaluator.numberOfVerticesWithEdgesCrossings(bestGraph.getValue0()));
-            System.out.println("Crossings VV: " + evaluator.numberOfVerticesWithVerticesCrossings(bestGraph.getValue0()));
+            PSZTGraph graph = bestGraph.getValue0();
+            System.out.println("Crossings EE: " + evaluator.numberOfCrossings(graph));
+            System.out.println("Crossings EV: " + evaluator.numberOfVerticesWithEdgesCrossings(graph));
+            System.out.println("Crossings VV: " + evaluator.numberOfVerticesWithVerticesCrossings(graph));
+            System.out.println("Rel error: " + evaluator.relativeErrorOfEdgeLengths(graph));
+
+            System.out.println("Punishment (percentage):");
+            System.out.println("EE: " + evaluator.crossingEECumulativePunishment(graph));
+            System.out.println("EV: " + evaluator.crossingVECumulativePunishment(graph));
+            System.out.println("VV: " + evaluator.crossingVVCumulativePunishment(graph));
+            System.out.println("angles: " + evaluator.anglesCumulativePunishment(graph));
+            System.out.println("lengths: " + evaluator.lengthCumulativePunishment(graph));
 
             fitness.setText("Fitness: " + bestGraph.getValue1());
-            PSZTGraphToSVGConverter converter = new PSZTGraphToSVGConverter(bestGraph.getValue0(), map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), map.get("Radius"));
+            PSZTGraphToSVGConverter converter = new PSZTGraphToSVGConverter(graph, map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue(), map.get("Radius"));
             converter.doTheMagic();
             Document doc = converter.getSvgDraw().getDoc();
             panel.setSize(map.get("Visibility Field Width").intValue(), map.get("Visibility Field Height").intValue());
@@ -298,6 +308,7 @@ public class MainWindow {
             this.getSvgCanvas().setDocument(doc);
         }
 
+        // tutaj odszarzanie przycisku do eksportu pliku
 
 //            org.javatuples.Pair<PSZTGraph, Double> bestPair = generator.getBestGraphFromCurrentPopulation();
 //            bestPair.getValue0();
